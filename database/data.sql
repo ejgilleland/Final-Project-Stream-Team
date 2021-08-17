@@ -14,3 +14,11 @@ insert into users
   values
   ('ejgilleland@gmail.com','pants'),
   ('crazycracka987@gmail.com','hello');
+
+insert into likes
+  ("userId", "streamerId")
+  values
+  ('1', '2'),
+  ('1', '1'),
+  ('2', '1'),
+  ('2', '2');
