@@ -1,0 +1,20 @@
+/* flex styles */
+.flex {
+  display: flex;
+}
+
+.flexwrap {
+  flex-wrap: wrap;
+}
+
+.flex-80 {
+  flex-basis: 80%;
+}
+
+.flex-10 {
+  flex-basis: 10%;
+}
+
+.flex-align {
+  align-items: center;
+}
