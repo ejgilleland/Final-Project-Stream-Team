@@ -11,9 +11,6 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    // const init = {
-    //   method: 'GET'
-    // }
     fetch('/api/likes')
       .then(response => response.json())
       .then(data => {
