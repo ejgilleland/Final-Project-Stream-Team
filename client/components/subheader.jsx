@@ -2,7 +2,7 @@ import React from 'react';
 
 function Subheader(props) {
   return (
-    <div className="header-font">
+    <div className="header-font margin-lr-5pct">
       <div>
         <h4 className="margin-top-1rem margin-bottom-halfrem">Hello, welcome to your Stream Team! Unsure where to start?
           &nbsp;<a href="#" className="font-yellow">Click here!</a>
@@ -10,7 +10,7 @@ function Subheader(props) {
       </div>
       <div>
         <form action="">
-          <input type="text" placeholder="Search..." />
+          <input type="text" placeholder="Search..." className="width-50pct" />
         </form>
       </div>
     </div>

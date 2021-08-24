@@ -6,7 +6,7 @@ function Body(props) {
     return <SmallProfile key={element.streamerId} name={element.displayName} imgUrl={element.profileImgUrl} twitch={element.isTwitch} recentVideo={element.recentVideo}/>;
   });
   return (
-    <div className="border-radius background-gray body-font padding-1rem flex margin-top-1rem">
+    <div className="border-radius background-gray body-font flex flex-wrap flex-justify-center gap padding-1rem body-margin-breakpoint margin-top-1rem margin-bottom-1rem">
       {profileElements}
     </div>
   );
