@@ -38,6 +38,20 @@ app.get('/api/likes', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.post('/api/favorites/:userId/:streamerId', (req, res, next) => {
+  const sql = `
+  insert into "favorites" ("userId", "streamerId")
+  values ($1, $2);
+  `;
+  const params = [req.params.userId, req.params.streamerId];
+  db
+    .query(sql, params)
+    .then(data => {
+      res.status(201).send();
+    })
+    .catch(err => next(err));
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
