@@ -25,6 +25,9 @@ app.get('/api/likes', (req, res, next) => {
     from "likes"
     join "streamers" using ("streamerId")
     where "userId" = $1
+    and "streamerId" not in
+      (select "streamerId"
+      from "favorites")
     order by "displayName";
   `;
   const params = [1];
@@ -34,6 +37,25 @@ app.get('/api/likes', (req, res, next) => {
     .then(data => {
       const likes = data.rows;
       res.status(200).json(likes);
+    })
+    .catch(err => next(err));
+});
+
+app.get('/api/favorites', (req, res, next) => {
+  const sql = `
+    select *
+    from "favorites"
+    join "streamers" using ("streamerId")
+    where "userId" = $1
+    order by "displayName";
+  `;
+  const params = [1];
+  // will remove the hard coding when authorized user functionality is implemented - selecting userId of 1 for now
+  db
+    .query(sql, params)
+    .then(data => {
+      const favorites = data.rows;
+      res.status(200).json(favorites);
     })
     .catch(err => next(err));
 });
