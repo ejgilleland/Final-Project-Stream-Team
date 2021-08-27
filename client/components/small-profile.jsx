@@ -2,10 +2,12 @@ import React from 'react';
 
 function SmallProfile(props) {
   return (
-    <div className="background-rainbow border-radius padding-3px rainbow-wh hover scaledown-breakpoint">
+    <div className="background-rainbow border-radius padding-3px rainbow-wh scaledown-breakpoint">
       <div className="background-black border-radius font-white center-text width-height flex flex-wrap flex-justify-center">
-        <div className="header-font flex-80 overflow-wrap height-70px flex flex-justify-center flex-align-center padding-halfrem">{props.name}</div>
-        <div>
+        <div className="header-font flex-80 overflow-wrap height-70px flex flex-justify-center flex-align-center padding-halfrem hover">
+          {props.name}
+        </div>
+        <div className="hover">
           <img className="border-radius-180 max-width-img" src={props.imgUrl} />
         </div>
         <ul className="flex liststyle-none padding-halfrem margin-0 flex-align-center">
@@ -24,8 +26,12 @@ function SmallProfile(props) {
               <i className="fas fa-external-link-alt"></i>
             </a>
           </li>
-          <li className="padding-quarter-rem font-size-26px">
-            <i className="font-yellow far fa-star"></i></li>
+          <li className="padding-quarter-rem font-size-26px hover" id={props.id} onClick={props.starClick}>
+            { (props.isFav)
+              ? <i className="font-yellow fas fa-star"></i>
+              : <i className="font-yellow far fa-star"></i>
+            }
+          </li>
         </ul>
       </div>
     </div>
