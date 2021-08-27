@@ -45,80 +45,16 @@ export default class App extends React.Component {
           favIds,
           likes,
           streamers,
-          loading: false,
-          userId: 1
-          // userId temporarily hard coded to 1 until authorization is set up
+          loading: false
         });
       })
       .catch(err => console.error(err));
   }
 
   componentDidMount() {
+    this.setState({ userId: 1 });
+    // userId temporarily hard coded to 1 until authorization is set up
     this.retrieveData();
-  //   const favorites = [];
-  //   fetch('/api/favorites')
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       // this.setState({
-  //       //   streamers: data,
-  //       //   loading: false
-  //       // });
-  //       // console.log('favdata', data.flat(2));
-  //       const resData = data.flat(2)
-  //       for(let i = 0; i < (resData.length); i++) {
-  //         favorites.push(resData[i]);
-  //       }
-  //       return fetch('/api/likes');
-  //     })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       const resData = data.flat(2);
-  //       const likes = [];
-  //       for (let i = 0; i < (resData.length); i++) {
-  //         likes.push(resData[i]);
-  //       }
-  //       const combination = [];
-  //       combination.push(favorites, likes);
-  //       const streamers = combination.flat(2);
-  //       const favIds = favorites.map(element => {
-  //         console.log("element:", element);
-  //         return element.streamerId;
-  //       });
-  //       this.setState({
-  //         favorites,
-  //         favIds,
-  //         likes,
-  //         streamers,
-  //         loading: false,
-  //         userId: 1
-  //         //userId temporarily hard coded to 1 until authorization is set up
-  //       });
-  //     })
-  //     .catch(err => console.error(err));
-  //   // fetch('/api/likes')
-  //   //   .then(response => response.json())
-  //   //   .then(data => {
-  //   //     // this.setState({
-  //   //     //   streamers: data,
-  //   //     //   loading: false
-  //   //     // });
-  //   //     console.log('likesdata' data)
-  //   //     likes.push(data);
-  //   //   })
-  //   //   .catch(err => console.error(err));
-  //   // console.log('favorites', favorites);
-  //   // console.log('likes', likes);
-  //   // const streamers = favorites.concat(likes);
-  //   //   this.setState({
-  //   //     favorites,
-  //   //     likes,
-  //   //     streamers,
-  //   //     loading: false
-  //   //   });
-  //   // this.setState({
-  //   //   streamers: data,
-  //   //   loading: false
-  //   // });
   }
 
   starClickHandler(event) {
