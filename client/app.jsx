@@ -58,7 +58,11 @@ export default class App extends React.Component {
   }
 
   starClickHandler(event) {
+    event.target.closest('li').classList.add('font-gray');
     const streamerId = parseInt(event.target.closest('li').id, 10);
+    const favIds = this.state.favIds;
+    favIds.push(streamerId);
+    this.setState({ favIds });
     const init = {
       method: 'POST'
     };
@@ -68,6 +72,7 @@ export default class App extends React.Component {
           this.retrieveData();
         }
       })
+      .then(() => { event.target.closest('li').classList.remove('font-gray'); })
       .catch(err => console.error(err));
   }
 
