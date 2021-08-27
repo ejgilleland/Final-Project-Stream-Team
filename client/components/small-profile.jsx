@@ -26,10 +26,10 @@ function SmallProfile(props) {
               <i className="fas fa-external-link-alt"></i>
             </a>
           </li>
-          <li className="padding-quarter-rem font-size-26px hover" id={props.id} onClick={props.starClick}>
+          <li className="active font-yellow padding-quarter-rem font-size-26px hover" id={props.id} onClick={props.starClick}>
             { (props.isFav)
-              ? <i className="font-yellow fas fa-star"></i>
-              : <i className="font-yellow far fa-star"></i>
+              ? <i className="fas fa-star"></i>
+              : <i className="far fa-star"></i>
             }
           </li>
         </ul>
