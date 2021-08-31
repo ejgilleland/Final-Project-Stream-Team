@@ -58,22 +58,45 @@ export default class App extends React.Component {
   }
 
   starClickHandler(event) {
-    event.target.closest('li').classList.add('font-gray');
-    const streamerId = parseInt(event.target.closest('li').id, 10);
+    const starContainer = event.target.closest('li');
+    starContainer.classList.add('font-gray');
+    const streamerId = parseInt(starContainer.id, 10);
     const favIds = this.state.favIds;
-    favIds.push(streamerId);
-    this.setState({ favIds });
-    const init = {
-      method: 'POST'
-    };
-    fetch(`/api/favorites/${this.state.userId}/${streamerId}`, init)
-      .then(response => {
-        if (response.status === 201) {
-          this.retrieveData();
-        }
-      })
-      .then(() => { event.target.closest('li').classList.remove('font-gray'); })
-      .catch(err => console.error(err));
+    const starPromise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(starContainer.classList.remove('font-gray'));
+        reject(new Error('Something went wrong'));
+      }, 500);
+    });
+    if (favIds.includes(streamerId)) {
+      const index = favIds.findIndex(element => element === streamerId);
+      favIds.splice(index, 1);
+      const init = {
+        method: 'DELETE'
+      };
+      fetch(`/api/favorites/${this.state.userId}/${streamerId}`, init)
+        .then(response => {
+          if (response.status === 204) {
+            this.retrieveData();
+            return starPromise;
+          }
+        })
+        .catch(err => console.error(err));
+    } else {
+      favIds.push(streamerId);
+      this.setState({ favIds });
+      const init = {
+        method: 'POST'
+      };
+      fetch(`/api/favorites/${this.state.userId}/${streamerId}`, init)
+        .then(response => {
+          if (response.status === 201) {
+            this.retrieveData();
+            return starPromise;
+          }
+        })
+        .catch(err => console.error(err));
+    }
   }
 
   render() {

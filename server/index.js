@@ -74,6 +74,21 @@ app.post('/api/favorites/:userId/:streamerId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.delete('/api/favorites/:userId/:streamerId', (req, res, next) => {
+  const sql = `
+  delete from "favorites"
+  where "userId" = $1
+  and "streamerId" = $2;
+  `;
+  const params = [req.params.userId, req.params.streamerId];
+  db
+    .query(sql, params)
+    .then(data => {
+      res.status(204).send();
+    })
+    .catch(err => next(err));
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
