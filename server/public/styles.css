@@ -47,7 +47,7 @@ html {
 }
 
 .background-grayed-out {
-  background-color: rgba(0,0,0, 0.65);
+  background-color: rgba(0, 0, 0, 0.65);
 }
 
 .font-black {
@@ -127,12 +127,7 @@ html {
 }
 
 .padding-bottom-0 {
-  padding-bottom: 0px;
-}
-
-.padding-lr-halfrem {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding-bottom: 0;
 }
 
 .contain {
@@ -168,10 +163,6 @@ html {
 
 .height-100pct {
   height: 100%;
-}
-
-.width-100pct {
-  width: 100%;
 }
 
 /* misc */
@@ -227,7 +218,7 @@ html {
   left: 0;
 }
 
-.close{
+.close {
   transition: color 0.3s ease-in-out;
 }
 
@@ -237,6 +228,6 @@ html {
   transition: color 0.3s ease-in-out;
 }
 
-.text-decoration-none{
+.text-decoration-none {
   text-decoration: none;
 }
