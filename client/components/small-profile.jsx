@@ -2,7 +2,6 @@ import React from 'react';
 import PopupModal from './popup-modal';
 
 function SmallProfile(props) {
-  console.log("smallprofile props", props);
   return (
     <div className="small-profile background-rainbow border-radius padding-3px rainbow-wh scaledown-breakpoint" id={props.id}>
       <div className="background-black border-radius font-white center-text width-height flex flex-wrap flex-justify-center">
@@ -15,8 +14,8 @@ function SmallProfile(props) {
         <ul className="flex liststyle-none padding-halfrem margin-0 flex-align-center">
           <li className="padding-quarter-rem font-size-26px">
             { (props.twitch)
-              ? <a href={`https://www.twitch.tv/${props.channel}`} target="_blank"><i className="fab fa-twitch font-purple "></i></a>
-              : <a href={`https://www.youtube.com/channel/${props.channel}`} target="_blank"><i className="fab fa-youtube font-red"></i></a>
+              ? <a href={`https://www.twitch.tv/${props.channel}`} target="_blank" rel="noreferrer"><i className="fab fa-twitch font-purple "></i></a>
+              : <a href={`https://www.youtube.com/channel/${props.channel}`} target="_blank" rel="noreferrer"><i className="fab fa-youtube font-red"></i></a>
             }
           </li>
           <li className="padding-quarter-rem">
@@ -37,7 +36,7 @@ function SmallProfile(props) {
         </ul>
       </div>
       {(props.modal)
-        ? <PopupModal name={props.name} imgUrl={props.imgUrl} twitch={props.twitch} recentVideo={props.recentVideo} starClick={props.starClick} isFav={props.isFav} description={props.description} channel={props.channel} />
+        ? <PopupModal name={props.name} imgUrl={props.imgUrl} twitch={props.twitch} recentVideo={props.recentVideo} starClick={props.starClick} modalCloser={props.modalCloser} isFav={props.isFav} description={props.description} channel={props.channel} />
         : null
       }
     </div>
