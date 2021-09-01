@@ -8,7 +8,7 @@ export default function Home(props) {
     <div>
       <Header />
       <Subheader />
-      <Body data={props.profileInfo} favIds={props.favIds} starClick={props.starClick} />
+      <Body data={props.profileInfo} favIds={props.favIds} starClick={props.starClick} modalClick={props.modalClick} modalCloser={props.modalCloser} modalData={props.modalData} />
     </div>
   );
 }

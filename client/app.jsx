@@ -10,10 +10,16 @@ export default class App extends React.Component {
       likes: [],
       streamers: [],
       loading: true,
-      userId: 0
+      userId: 0,
+      modal: {
+        isOpen: false,
+        streamerId: 0
+      }
     };
     this.retrieveData = this.retrieveData.bind(this);
     this.starClickHandler = this.starClickHandler.bind(this);
+    this.modalClickHandler = this.modalClickHandler.bind(this);
+    this.modalCloser = this.modalCloser.bind(this);
   }
 
   retrieveData() {
@@ -60,7 +66,7 @@ export default class App extends React.Component {
   starClickHandler(event) {
     const starContainer = event.target.closest('li');
     starContainer.classList.add('font-gray');
-    const streamerId = parseInt(starContainer.id, 10);
+    const streamerId = parseInt(event.target.closest('div.small-profile').id, 10);
     const favIds = this.state.favIds;
     const starPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -71,6 +77,7 @@ export default class App extends React.Component {
     if (favIds.includes(streamerId)) {
       const index = favIds.findIndex(element => element === streamerId);
       favIds.splice(index, 1);
+      this.setState(favIds);
       const init = {
         method: 'DELETE'
       };
@@ -99,11 +106,32 @@ export default class App extends React.Component {
     }
   }
 
+  modalClickHandler(event) {
+    const streamerId = parseInt(event.target.closest('div.small-profile').id, 10);
+    this.setState({
+      modal: {
+        isOpen: true,
+        streamerId
+      }
+    });
+  }
+
+  modalCloser(event) {
+    if (event.target.className.includes('modal-shadow') || event.target.className.includes('close')) {
+      this.setState({
+        modal: {
+          isOpen: false,
+          streamerId: 0
+        }
+      });
+    }
+  }
+
   render() {
     return (
       (this.state.loading)
         ? null
-        : <Home profileInfo={this.state.streamers} favIds={this.state.favIds} starClick={this.starClickHandler}/>
+        : <Home profileInfo={this.state.streamers} favIds={this.state.favIds} starClick={this.starClickHandler} modalClick={this.modalClickHandler} modalCloser={this.modalCloser} modalData={this.state.modal}/>
     );
   }
 }
