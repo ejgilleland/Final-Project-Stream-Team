@@ -12,11 +12,15 @@ function Body(props) {
     description={element.description}
     channel={(element.isTwitch) ? element.twitchLogin : element.channelId}/>;
   });
+  const searchedProfiles = profileElements.filter(element => element.props.name.toLowerCase().includes(props.searchData.value));
   return (
     <div className="border-radius background-gray body-font flex flex-wrap
     flex-justify-center gap padding-1rem body-margin-breakpoint margin-top-1rem
     margin-bottom-1rem">
-      {profileElements}
+      {(props.searchData.isSearching)
+        ? (searchedProfiles.length > 0) ? searchedProfiles : 'There\'s nothing here!'
+        : profileElements
+      }
     </div>
   );
 }

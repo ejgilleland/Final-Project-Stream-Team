@@ -134,24 +134,22 @@ export default class App extends React.Component {
   }
 
   handleChange(event) {
-    // console.log(event.target.value);
     this.setState({
       search: {
         isSearching: !!event.target.value.length,
-        value: event.target.value
+        value: event.target.value.toLowerCase()
       }
     });
   }
 
   render() {
-    // console.log('state:', this.state);
     return (
       (this.state.loading)
         ? null
         : <Home profileInfo={this.state.streamers} favIds={this.state.favIds}
         starClick={this.starClickHandler} modalClick={this.modalClickHandler}
         modalCloser={this.modalCloser} modalData={this.state.modal}
-        handleChange={this.handleChange}/>
+        handleChange={this.handleChange} searchData={this.state.search}/>
     );
   }
 }
