@@ -14,12 +14,17 @@ export default class App extends React.Component {
       modal: {
         isOpen: false,
         streamerId: 0
+      },
+      search: {
+        isSearching: false,
+        value: ''
       }
     };
     this.retrieveData = this.retrieveData.bind(this);
     this.starClickHandler = this.starClickHandler.bind(this);
     this.modalClickHandler = this.modalClickHandler.bind(this);
     this.modalCloser = this.modalCloser.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   retrieveData() {
@@ -117,7 +122,8 @@ export default class App extends React.Component {
   }
 
   modalCloser(event) {
-    if (event.target.className.includes('modal-shadow') || event.target.className.includes('close')) {
+    if (event.target.className.includes('modal-shadow') ||
+    event.target.className.includes('close')) {
       this.setState({
         modal: {
           isOpen: false,
@@ -127,11 +133,25 @@ export default class App extends React.Component {
     }
   }
 
+  handleChange(event) {
+    // console.log(event.target.value);
+    this.setState({
+      search: {
+        isSearching: !!event.target.value.length,
+        value: event.target.value
+      }
+    });
+  }
+
   render() {
+    // console.log('state:', this.state);
     return (
       (this.state.loading)
         ? null
-        : <Home profileInfo={this.state.streamers} favIds={this.state.favIds} starClick={this.starClickHandler} modalClick={this.modalClickHandler} modalCloser={this.modalCloser} modalData={this.state.modal}/>
+        : <Home profileInfo={this.state.streamers} favIds={this.state.favIds}
+        starClick={this.starClickHandler} modalClick={this.modalClickHandler}
+        modalCloser={this.modalCloser} modalData={this.state.modal}
+        handleChange={this.handleChange}/>
     );
   }
 }
