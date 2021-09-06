@@ -41,6 +41,10 @@ app.get('/api/likes', (req, res, next) => {
     .catch(err => next(err));
 });
 
+// app.get('/api/likes/:channelId', (req, res, next) => {
+
+// })
+
 app.get('/api/favorites', (req, res, next) => {
   const sql = `
     select *

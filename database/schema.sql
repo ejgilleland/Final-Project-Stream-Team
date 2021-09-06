@@ -15,6 +15,8 @@ CREATE TABLE "users" (
   OIDS=FALSE
 );
 
+SET TIMEZONE='America/Los_angeles';
+
 CREATE TABLE "streamers" (
 	"streamerId" serial NOT NULL,
 	"channelId" TEXT NOT NULL UNIQUE,
@@ -23,7 +25,7 @@ CREATE TABLE "streamers" (
 	"profileImgUrl" TEXT NOT NULL,
 	"recentVideo" TEXT NOT NULL,
 	"isTwitch" BOOLEAN NOT NULL,
-	"twitchLogin" TEXT,
+	"twitchId" TEXT,
 	"isLive" BOOLEAN NOT NULL,
 	"lastUpdated" TIMESTAMP NOT NULL default now(),
 	CONSTRAINT "streamers_pk" PRIMARY KEY ("streamerId")
