@@ -231,3 +231,15 @@ html {
 .text-decoration-none {
   text-decoration: none;
 }
+
+.z-index {
+  z-index: 9999;
+}
+
+.block {
+  display: block;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}

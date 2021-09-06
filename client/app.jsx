@@ -18,13 +18,15 @@ export default class App extends React.Component {
       search: {
         isSearching: false,
         value: ''
-      }
+      },
+      dropdown: false
     };
     this.retrieveData = this.retrieveData.bind(this);
     this.starClickHandler = this.starClickHandler.bind(this);
-    this.modalClickHandler = this.modalClickHandler.bind(this);
+    this.modalProfileHandler = this.modalProfileHandler.bind(this);
     this.modalCloser = this.modalCloser.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.dropdownHandler = this.dropdownHandler.bind(this);
   }
 
   retrieveData() {
@@ -111,7 +113,7 @@ export default class App extends React.Component {
     }
   }
 
-  modalClickHandler(event) {
+  modalProfileHandler(event) {
     const streamerId = parseInt(event.target.closest('div.small-profile').id, 10);
     this.setState({
       modal: {
@@ -133,6 +135,13 @@ export default class App extends React.Component {
     }
   }
 
+  dropdownHandler(event) {
+    if (event.target.classList.contains('dropdown')) {
+      const newDropdown = !(this.state.dropdown);
+      this.setState({ dropdown: newDropdown });
+    }
+  }
+
   handleChange(event) {
     this.setState({
       search: {
@@ -147,9 +156,11 @@ export default class App extends React.Component {
       (this.state.loading)
         ? null
         : <Home profileInfo={this.state.streamers} favIds={this.state.favIds}
-        starClick={this.starClickHandler} modalClick={this.modalClickHandler}
+        starClick={this.starClickHandler} modalProfileClick={this.modalProfileHandler}
         modalCloser={this.modalCloser} modalData={this.state.modal}
-        handleChange={this.handleChange} searchData={this.state.search}/>
+        handleChange={this.handleChange} dropdown={this.state.dropdown}
+        dropdownHandler={this.dropdownHandler}
+        searchData={this.state.search}/>
     );
   }
 }

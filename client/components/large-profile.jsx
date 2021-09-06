@@ -1,6 +1,6 @@
 import React from 'react';
 
-function PopupModal(props) {
+function LargeProfilePopup(props) {
   const link = (props.twitch)
     ? `https://www.twitch.tv/${props.channel}`
     : `https://www.youtube.com/channel/${props.channel}`;
@@ -75,4 +75,4 @@ function PopupModal(props) {
   );
 }
 
-export default PopupModal;
+export default LargeProfilePopup;
