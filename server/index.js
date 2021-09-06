@@ -2,6 +2,7 @@ require('dotenv/config');
 const express = require('express');
 const errorMiddleware = require('./error-middleware');
 const staticMiddleware = require('./static-middleware');
+const ClientError = require('./client-error');
 const pg = require('pg');
 
 const db = new pg.Pool({
@@ -41,9 +42,36 @@ app.get('/api/likes', (req, res, next) => {
     .catch(err => next(err));
 });
 
-// app.get('/api/likes/:channelId', (req, res, next) => {
-
-// })
+app.get('/api/streamers/:channelId', (req, res, next) => {
+  const sql = `
+  select *
+  from "streamers"
+  where "channelId" = $1;
+  `;
+  const params = [req.params.channelId];
+  db
+    .query(sql, params)
+    .then(data => {
+      const profile = data.rows;
+      res.status(200).json(profile);
+      // if (profile.length) {
+      //   res.status(200).json(profile);
+      // } else {
+      // const init = {
+      //   Headers: {
+      //     'Authorization': `Bearer ${process.env.TWITCH_TOKEN}`,
+      //     'Client-Id': process.env.TWITCH_ID
+      //   }
+      // }
+      // fetch(`https://api.twitch.tv/helix/users?login=${req.params.channelId}`, init)
+      //   .then(response => {
+      //     res.status(200).send(response)
+      //   })
+      //   .catch(err => console.error(err));
+      // }
+    })
+    .catch(err => next(err));
+});
 
 app.get('/api/favorites', (req, res, next) => {
   const sql = `
@@ -62,6 +90,26 @@ app.get('/api/favorites', (req, res, next) => {
       res.status(200).json(favorites);
     })
     .catch(err => next(err));
+});
+
+app.post('/api/likes/:userId/:streamerId', (req, res, next) => {
+  const sql = `
+  insert into "likes" ("userId", "streamerId")
+  values ($1, $2);
+  `;
+  const params = [req.params.userId, req.params.streamerId];
+  db
+    .query(sql, params)
+    .then(data => {
+      if (res.ok) res.status(201).send();
+    })
+    .catch(err => {
+      if (err.code === '23505') {
+        next(new ClientError(400, 'You are already following this profile!'));
+      } else {
+        next(err);
+      }
+    });
 });
 
 app.post('/api/favorites/:userId/:streamerId', (req, res, next) => {
