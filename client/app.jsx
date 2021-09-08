@@ -1,5 +1,6 @@
 import React from 'react';
 import Home from './pages/home';
+// import AddProfileContent from './components/add-profile-content';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -19,14 +20,23 @@ export default class App extends React.Component {
         isSearching: false,
         value: ''
       },
-      dropdown: false
+      dropdown: false,
+      profileAdd: {
+        isOpen: true,
+        urlValue: ''
+      }
     };
     this.retrieveData = this.retrieveData.bind(this);
     this.starClickHandler = this.starClickHandler.bind(this);
     this.modalProfileHandler = this.modalProfileHandler.bind(this);
     this.modalCloser = this.modalCloser.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleSearchbarChange = this.handleSearchbarChange.bind(this);
     this.dropdownHandler = this.dropdownHandler.bind(this);
+    this.addProfileModalHandler = this.addProfileModalHandler.bind(this);
+    // this.addProfileModalContent = this.addProfileModalContent.bind(this);
+    this.addProfileSubmit = this.addProfileSubmit.bind(this);
+    this.addProfileChange = this.addProfileChange.bind(this);
+    this.addProfileValidator = this.addProfileValidator.bind(this);
   }
 
   retrieveData() {
@@ -123,6 +133,38 @@ export default class App extends React.Component {
     });
   }
 
+  addProfileModalHandler(event) {
+    this.setState({
+      profileAdd: {
+        isOpen: true
+      }
+    });
+  }
+
+  addProfileChange(event) {
+    this.setState({
+      profileAdd: {
+        isOpen: true,
+        urlValue: event.target.value
+      }
+    });
+  }
+
+  addProfileSubmit(event) {
+    event.preventDefault();
+  }
+
+  // addProfileModalContent() {
+  //   return <AddProfileContent addProfileValidator={this.addProfileValidator()} urlChange={this.addProfileChange} submit={this.addProfileSubmit}/>
+  // }
+
+  addProfileValidator() {
+    const twitch = /https:\/\/www\.twitch\.tv\/.+/i;
+    const yt = /https:\/\/www\.youtube\.com\/channel\/.+/i;
+    const urlCheck = (yt.test(this.state.profileAdd.urlValue) || twitch.test(this.state.profileAdd.urlValue));
+    return urlCheck;
+  }
+
   modalCloser(event) {
     if (event.target.className.includes('modal-shadow') ||
     event.target.className.includes('close')) {
@@ -130,6 +172,9 @@ export default class App extends React.Component {
         modal: {
           isOpen: false,
           streamerId: 0
+        },
+        profileAdd: {
+          isOpen: false
         }
       });
     }
@@ -142,7 +187,7 @@ export default class App extends React.Component {
     }
   }
 
-  handleChange(event) {
+  handleSearchbarChange(event) {
     this.setState({
       search: {
         isSearching: !!event.target.value.length,
@@ -152,15 +197,19 @@ export default class App extends React.Component {
   }
 
   render() {
+    this.addProfileValidator();
     return (
       (this.state.loading)
         ? null
         : <Home profileInfo={this.state.streamers} favIds={this.state.favIds}
         starClick={this.starClickHandler} modalProfileClick={this.modalProfileHandler}
         modalCloser={this.modalCloser} modalData={this.state.modal}
-        handleChange={this.handleChange} dropdown={this.state.dropdown}
-        dropdownHandler={this.dropdownHandler}
-        searchData={this.state.search}/>
+        handleSearchbarChange={this.handleSearchbarChange} dropdown={this.state.dropdown}
+        dropdownHandler={this.dropdownHandler} addModalClick={this.addProfileModalHandler}
+        addModalOpen={this.state.profileAdd}
+        searchData={this.state.search}
+        addProfileValidator={this.addProfileValidator()} addProfileChange={this.addProfileChange} addProfileSubmit={this.addProfileSubmit}/>
+
     );
   }
 }

@@ -15,8 +15,16 @@
   flex-basis: 10%;
 }
 
+.flex-20 {
+  flex-basis: 20%;
+}
+
 .flex-align-center {
   align-items: center;
+}
+
+.flexend {
+  justify-self: self-end;
 }
 
 .flex-justify-center {

@@ -11,8 +11,9 @@ function Subheader(props) {
       </div>
       <div>
         <form action="">
-          <input type="text" placeholder="Search..." className="width-50pct"
-          onChange={props.handleChange} />
+          <input type="text" placeholder="Search..." className="width-50pct
+          body-font font-size-inherit"
+          onChange={props.handleSearchbarChange} />
         </form>
       </div>
     </div>

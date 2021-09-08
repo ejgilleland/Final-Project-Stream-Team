@@ -8,9 +8,9 @@ function DropdownModal(props) {
       <div className="height-100pct dropdown-width-breakpoint background-white ">
         <ul className="body-font liststyle-none center-text padding-1rem margin-0">
           <li className="dropdown margin-top-1rem margin-bottom-1rem font-size-26px overflow-hidden">
-            <a href='#' className="font-yellow dropdown">
-              Add a Streamer
-              </a>
+            <a href='#' className="font-yellow dropdown" onClick={props.addModalClick}>
+              Add a profile
+            </a>
           </li>
           <li className="dropdown margin-top-1rem margin-bottom-1rem font-size-26px">
             <a href='#' className="font-red dropdown">
