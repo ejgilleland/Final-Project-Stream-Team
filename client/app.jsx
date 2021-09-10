@@ -151,6 +151,12 @@ export default class App extends React.Component {
   }
 
   addProfileSubmit(event) {
+    const splitUrl = this.state.profileAdd.urlValue.split('/');
+    const channelId = splitUrl[splitUrl.length - 1].toLowerCase();
+    fetch(`/api/streamers/${channelId}`)
+      .then(response => response.json())
+      // eslint-disable-next-line no-console
+      .then(data => console.log(data));
     event.preventDefault();
   }
 
@@ -159,7 +165,8 @@ export default class App extends React.Component {
   // }
 
   addProfileValidator() {
-    const twitch = /https:\/\/www\.twitch\.tv\/.+/i;
+    // const twitch = /https:\/\/www\.twitch\.tv\/.+/i;
+    const twitch = /https:\/\/www\.twitch\.tv\/[\w]{3,24}$/;
     const yt = /https:\/\/www\.youtube\.com\/channel\/.+/i;
     const urlCheck = (yt.test(this.state.profileAdd.urlValue) || twitch.test(this.state.profileAdd.urlValue));
     return urlCheck;
@@ -197,7 +204,6 @@ export default class App extends React.Component {
   }
 
   render() {
-    this.addProfileValidator();
     return (
       (this.state.loading)
         ? null

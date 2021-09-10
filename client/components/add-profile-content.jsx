@@ -14,7 +14,7 @@ function AddProfileContent(props) {
       </ul>
 
       <div className="padding-1rem">
-        <form>
+        <form onSubmit={props.submit}>
         <label htmlFor="streamer-url">
           <h3 className="header-font margin-0">Please enter a channel&apos;s URL</h3>
         </label>
@@ -23,7 +23,7 @@ function AddProfileContent(props) {
           <br />
           <input className="button margin-top-1rem font-size-inherit body-font
           border-radius padding-button font-black background-gray border"
-            type="submit" value="Submit" required disabled={!props.addProfileValidator} onSubmit={props.submit}/>
+            type="submit" value="Submit" required disabled={!props.addProfileValidator}/>
         </form>
       </div>
 
