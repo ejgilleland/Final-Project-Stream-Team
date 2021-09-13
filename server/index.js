@@ -55,7 +55,7 @@ app.get('/api/streamers/:channelId', (req, res, next) => {
     .then(data => {
       const profile = data.rows;
       if (profile.length) {
-        res.status(200).json(profile);
+        res.status(200).json(profile[0]);
       } else { next(); }
     })
     .catch(err => next(err));
@@ -141,11 +141,11 @@ app.post('/api/likes/:userId/:streamerId', (req, res, next) => {
   db
     .query(sql, params)
     .then(data => {
-      if (res.ok) res.status(201).send();
+      res.status(201).send();
     })
     .catch(err => {
       if (err.code === '23505') {
-        next(new ClientError(400, 'You are already following this profile!'));
+        next(new ClientError(400, 'You are already following this profile'));
       } else {
         next(err);
       }

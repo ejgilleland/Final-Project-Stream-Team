@@ -12,14 +12,14 @@ export default function Home(props) {
       <Header dropdownHandler={props.dropdownHandler} />
       { (props.dropdown)
         ? <DropdownModal dropdownHandler={props.dropdownHandler}
-        addModalClick={props.addModalClick} />
+          addModalClick={props.addModalClick} />
         : null
       }
-      { (props.addModalOpen.isOpen)
+      { (props.addModal.isOpen)
         ? <AddProfileModal
-        modalCloser={props.modalCloser}>
-          <AddProfileContent addProfileValidator={props.addProfileValidator} urlChange={props.addProfileChange} submit={props.addProfileSubmit} />
-        </AddProfileModal>
+          modalCloser={props.modalCloser}>
+            <AddProfileContent screen={props.addScreen} addData={props.addData} addError={props.addError} addProfileValidator={props.addProfileValidator} urlChange={props.addProfileChange} submit={props.addProfileSubmit} clickReset={props.clickReset} clickYes={props.clickYes} clickClose={props.clickClose} />
+          </AddProfileModal>
         : null
       }
       <Subheader handleSearchbarChange={props.handleSearchbarChange} />

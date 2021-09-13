@@ -1,6 +1,5 @@
 import React from 'react';
 import Home from './pages/home';
-// import AddProfileContent from './components/add-profile-content';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -24,7 +23,14 @@ export default class App extends React.Component {
       profileAdd: {
         isOpen: true,
         urlValue: ''
-      }
+      },
+      addScreen: 0,
+      addedStreamer: {
+        name: '',
+        imgUrl: '',
+        streamerId: -1
+      },
+      error: ''
     };
     this.retrieveData = this.retrieveData.bind(this);
     this.starClickHandler = this.starClickHandler.bind(this);
@@ -33,10 +39,12 @@ export default class App extends React.Component {
     this.handleSearchbarChange = this.handleSearchbarChange.bind(this);
     this.dropdownHandler = this.dropdownHandler.bind(this);
     this.addProfileModalHandler = this.addProfileModalHandler.bind(this);
-    // this.addProfileModalContent = this.addProfileModalContent.bind(this);
     this.addProfileSubmit = this.addProfileSubmit.bind(this);
     this.addProfileChange = this.addProfileChange.bind(this);
     this.addProfileValidator = this.addProfileValidator.bind(this);
+    this.clickReset = this.clickReset.bind(this);
+    this.clickYes = this.clickYes.bind(this);
+    this.clickClose = this.clickClose.bind(this);
   }
 
   retrieveData() {
@@ -151,21 +159,102 @@ export default class App extends React.Component {
   }
 
   addProfileSubmit(event) {
+    this.setState({ addScreen: 1 });
+    event.preventDefault();
     const splitUrl = this.state.profileAdd.urlValue.split('/');
     const channelId = splitUrl[splitUrl.length - 1].toLowerCase();
     fetch(`/api/streamers/${channelId}`)
       .then(response => response.json())
-      // eslint-disable-next-line no-console
-      .then(data => console.log(data));
-    event.preventDefault();
+      .then(data => {
+        this.setState({
+          addScreen: 2,
+          addedStreamer: {
+            name: data.displayName,
+            imgUrl: data.profileImgUrl,
+            streamerId: data.streamerId
+          },
+          profileAdd: {
+            isOpen: true,
+            urlValue: ''
+          }
+        });
+      });
   }
 
-  // addProfileModalContent() {
-  //   return <AddProfileContent addProfileValidator={this.addProfileValidator()} urlChange={this.addProfileChange} submit={this.addProfileSubmit}/>
-  // }
+  clickReset() {
+    this.setState({
+      addScreen: 0,
+      addedStreamer: {
+        name: '',
+        imgUrl: '',
+        streamerId: -1
+      }
+    });
+  }
+
+  clickYes() {
+    const init = {
+      method: 'POST'
+    };
+    fetch(`/api/likes/${this.state.userId}/${this.state.addedStreamer.streamerId}`, init)
+      .then(response => {
+        if (response.ok) {
+          this.retrieveData();
+          setTimeout(() => {
+            this.setState({
+              addScreen: 0,
+              addedStreamer: {
+                name: '',
+                imgUrl: '',
+                streamerId: -1
+              },
+              profileAdd: {
+                isOpen: false,
+                urlValue: ''
+              }
+            });
+          }, 750);
+        } else {
+          return response.json();
+        }
+      })
+      .then(data => {
+        const errorMessage =
+        (data)
+          ? data.error
+          : null;
+        if (errorMessage) {
+          const cleanText = errorMessage.replace(/\xA0/g, ' ');
+          this.setState({
+            addedStreamer: {
+              name: '',
+              imgUrl: '',
+              streamerId: -1
+            },
+            addScreen: 3,
+            error: cleanText
+          });
+        }
+      });
+  }
+
+  clickClose() {
+    this.setState({
+      profileAdd: {
+        isOpen: false,
+        urlValue: ''
+      },
+      addScreen: 0,
+      addedStreamer: {
+        name: '',
+        imgUrl: '',
+        streamerId: -1
+      },
+      error: ''
+    });
+  }
 
   addProfileValidator() {
-    // const twitch = /https:\/\/www\.twitch\.tv\/.+/i;
     const twitch = /https:\/\/www\.twitch\.tv\/[\w]{3,24}$/;
     const yt = /https:\/\/www\.youtube\.com\/channel\/.+/i;
     const urlCheck = (yt.test(this.state.profileAdd.urlValue) || twitch.test(this.state.profileAdd.urlValue));
@@ -212,9 +301,10 @@ export default class App extends React.Component {
         modalCloser={this.modalCloser} modalData={this.state.modal}
         handleSearchbarChange={this.handleSearchbarChange} dropdown={this.state.dropdown}
         dropdownHandler={this.dropdownHandler} addModalClick={this.addProfileModalHandler}
-        addModalOpen={this.state.profileAdd}
+          addModal={this.state.profileAdd} addScreen={this.state.addScreen} addData={this.state.addedStreamer} addError={this.state.error}
         searchData={this.state.search}
-        addProfileValidator={this.addProfileValidator()} addProfileChange={this.addProfileChange} addProfileSubmit={this.addProfileSubmit}/>
+        addProfileValidator={this.addProfileValidator()} addProfileChange={this.addProfileChange} addProfileSubmit={this.addProfileSubmit}
+        clickReset={this.clickReset} clickYes={this.clickYes} clickClose={this.clickClose} />
 
     );
   }
