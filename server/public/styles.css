@@ -264,3 +264,7 @@ html {
   border: 2px #e8e8e8 solid;
   color: #e8e8e8;
 }
+
+.no-border {
+  border: none;
+}

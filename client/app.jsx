@@ -21,7 +21,7 @@ export default class App extends React.Component {
       },
       dropdown: false,
       profileAdd: {
-        isOpen: true,
+        isOpen: false,
         urlValue: ''
       },
       addScreen: 0,
@@ -166,18 +166,32 @@ export default class App extends React.Component {
     fetch(`/api/streamers/${channelId}`)
       .then(response => response.json())
       .then(data => {
-        this.setState({
-          addScreen: 2,
-          addedStreamer: {
-            name: data.displayName,
-            imgUrl: data.profileImgUrl,
-            streamerId: data.streamerId
-          },
-          profileAdd: {
-            isOpen: true,
-            urlValue: ''
-          }
-        });
+        if (data.error) {
+          const errorMessage = data.error;
+          const cleanText = errorMessage.replace(/\xA0/g, ' ');
+          this.setState({
+            addedStreamer: {
+              name: '',
+              imgUrl: '',
+              streamerId: -1
+            },
+            addScreen: 3,
+            error: cleanText
+          });
+        } else {
+          this.setState({
+            addScreen: 2,
+            addedStreamer: {
+              name: data.displayName,
+              imgUrl: data.profileImgUrl,
+              streamerId: data.streamerId
+            },
+            profileAdd: {
+              isOpen: true,
+              urlValue: ''
+            }
+          });
+        }
       });
   }
 
@@ -257,7 +271,8 @@ export default class App extends React.Component {
   addProfileValidator() {
     const twitch = /https:\/\/www\.twitch\.tv\/[\w]{3,24}$/;
     const yt = /https:\/\/www\.youtube\.com\/channel\/.+/i;
-    const urlCheck = (yt.test(this.state.profileAdd.urlValue) || twitch.test(this.state.profileAdd.urlValue));
+    const urlCheck = (yt.test(this.state.profileAdd.urlValue) ||
+    twitch.test(this.state.profileAdd.urlValue));
     return urlCheck;
   }
 
@@ -301,9 +316,10 @@ export default class App extends React.Component {
         modalCloser={this.modalCloser} modalData={this.state.modal}
         handleSearchbarChange={this.handleSearchbarChange} dropdown={this.state.dropdown}
         dropdownHandler={this.dropdownHandler} addModalClick={this.addProfileModalHandler}
-          addModal={this.state.profileAdd} addScreen={this.state.addScreen} addData={this.state.addedStreamer} addError={this.state.error}
-        searchData={this.state.search}
-        addProfileValidator={this.addProfileValidator()} addProfileChange={this.addProfileChange} addProfileSubmit={this.addProfileSubmit}
+        addModal={this.state.profileAdd} addScreen={this.state.addScreen}
+        addData={this.state.addedStreamer} addError={this.state.error}
+          searchData={this.state.search} addProfileChange={this.addProfileChange}
+        addProfileValidator={this.addProfileValidator()} addProfileSubmit={this.addProfileSubmit}
         clickReset={this.clickReset} clickYes={this.clickYes} clickClose={this.clickClose} />
 
     );

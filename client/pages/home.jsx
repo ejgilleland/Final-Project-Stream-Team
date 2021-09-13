@@ -16,9 +16,12 @@ export default function Home(props) {
         : null
       }
       { (props.addModal.isOpen)
-        ? <AddProfileModal
-          modalCloser={props.modalCloser}>
-            <AddProfileContent screen={props.addScreen} addData={props.addData} addError={props.addError} addProfileValidator={props.addProfileValidator} urlChange={props.addProfileChange} submit={props.addProfileSubmit} clickReset={props.clickReset} clickYes={props.clickYes} clickClose={props.clickClose} />
+        ? <AddProfileModal modalCloser={props.modalCloser}>
+            <AddProfileContent screen={props.addScreen} addData={props.addData}
+            addError={props.addError} addProfileValidator={props.addProfileValidator}
+            urlChange={props.addProfileChange} submit={props.addProfileSubmit}
+            clickReset={props.clickReset} clickYes={props.clickYes}
+            clickClose={props.clickClose} />
           </AddProfileModal>
         : null
       }

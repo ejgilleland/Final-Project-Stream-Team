@@ -72,16 +72,20 @@ app.get('/api/streamers/:channelId', (req, res, next) => {
   fetch(`https://api.twitch.tv/helix/users?login=${req.params.channelId}`, init)
     .then(response => response.json())
     .then(data => {
-      const values = data.data[0];
-      const sql = `
-      insert into "streamers" ("channelId", "displayName", "description",
-      "profileImgUrl", "recentVideo", "isTwitch","twitchId", "isLive")
-      values ($1, $2, $3, $4, $5, $6, $7, $8)
-      returning *;
-      `;
-      const params = [values.login, values.display_name, values.description,
-        values.profile_image_url, '', true, values.id, false];
-      return db.query(sql, params);
+      if (!data.data.length) {
+        throw new ClientError(404, `User '${req.params.channelId}' not found`);
+      } else {
+        const values = data.data[0];
+        const sql = `
+        insert into "streamers" ("channelId", "displayName", "description",
+        "profileImgUrl", "recentVideo", "isTwitch","twitchId", "isLive")
+        values ($1, $2, $3, $4, $5, $6, $7, $8)
+        returning *;
+        `;
+        const params = [values.login, values.display_name, values.description,
+          values.profile_image_url, '', true, values.id, false];
+        return db.query(sql, params);
+      }
     })
     .then(data => {
       const profile = data.rows[0];
