@@ -18,13 +18,33 @@ export default class App extends React.Component {
       search: {
         isSearching: false,
         value: ''
-      }
+      },
+      dropdown: false,
+      profileAdd: {
+        isOpen: false,
+        urlValue: ''
+      },
+      addScreen: 0,
+      addedStreamer: {
+        name: '',
+        imgUrl: '',
+        streamerId: -1
+      },
+      error: ''
     };
     this.retrieveData = this.retrieveData.bind(this);
     this.starClickHandler = this.starClickHandler.bind(this);
-    this.modalClickHandler = this.modalClickHandler.bind(this);
+    this.modalProfileHandler = this.modalProfileHandler.bind(this);
     this.modalCloser = this.modalCloser.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleSearchbarChange = this.handleSearchbarChange.bind(this);
+    this.dropdownHandler = this.dropdownHandler.bind(this);
+    this.addProfileModalHandler = this.addProfileModalHandler.bind(this);
+    this.addProfileSubmit = this.addProfileSubmit.bind(this);
+    this.addProfileChange = this.addProfileChange.bind(this);
+    this.addProfileValidator = this.addProfileValidator.bind(this);
+    this.clickReset = this.clickReset.bind(this);
+    this.clickYes = this.clickYes.bind(this);
+    this.clickClose = this.clickClose.bind(this);
   }
 
   retrieveData() {
@@ -111,7 +131,7 @@ export default class App extends React.Component {
     }
   }
 
-  modalClickHandler(event) {
+  modalProfileHandler(event) {
     const streamerId = parseInt(event.target.closest('div.small-profile').id, 10);
     this.setState({
       modal: {
@@ -121,6 +141,141 @@ export default class App extends React.Component {
     });
   }
 
+  addProfileModalHandler(event) {
+    this.setState({
+      profileAdd: {
+        isOpen: true
+      }
+    });
+  }
+
+  addProfileChange(event) {
+    this.setState({
+      profileAdd: {
+        isOpen: true,
+        urlValue: event.target.value
+      }
+    });
+  }
+
+  addProfileSubmit(event) {
+    this.setState({ addScreen: 1 });
+    event.preventDefault();
+    const splitUrl = this.state.profileAdd.urlValue.split('/');
+    const channelId = splitUrl[splitUrl.length - 1].toLowerCase();
+    fetch(`/api/streamers/${channelId}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          const errorMessage = data.error;
+          const cleanText = errorMessage.replace(/\xA0/g, ' ');
+          this.setState({
+            addedStreamer: {
+              name: '',
+              imgUrl: '',
+              streamerId: -1
+            },
+            addScreen: 3,
+            error: cleanText
+          });
+        } else {
+          this.setState({
+            addScreen: 2,
+            addedStreamer: {
+              name: data.displayName,
+              imgUrl: data.profileImgUrl,
+              streamerId: data.streamerId
+            },
+            profileAdd: {
+              isOpen: true,
+              urlValue: ''
+            }
+          });
+        }
+      });
+  }
+
+  clickReset() {
+    this.setState({
+      addScreen: 0,
+      addedStreamer: {
+        name: '',
+        imgUrl: '',
+        streamerId: -1
+      }
+    });
+  }
+
+  clickYes() {
+    const init = {
+      method: 'POST'
+    };
+    fetch(`/api/likes/${this.state.userId}/${this.state.addedStreamer.streamerId}`, init)
+      .then(response => {
+        if (response.ok) {
+          this.retrieveData();
+          setTimeout(() => {
+            this.setState({
+              addScreen: 0,
+              addedStreamer: {
+                name: '',
+                imgUrl: '',
+                streamerId: -1
+              },
+              profileAdd: {
+                isOpen: false,
+                urlValue: ''
+              }
+            });
+          }, 750);
+        } else {
+          return response.json();
+        }
+      })
+      .then(data => {
+        const errorMessage =
+        (data)
+          ? data.error
+          : null;
+        if (errorMessage) {
+          const cleanText = errorMessage.replace(/\xA0/g, ' ');
+          this.setState({
+            addedStreamer: {
+              name: '',
+              imgUrl: '',
+              streamerId: -1
+            },
+            addScreen: 3,
+            error: cleanText
+          });
+        }
+      });
+  }
+
+  clickClose() {
+    this.setState({
+      profileAdd: {
+        isOpen: false,
+        urlValue: ''
+      },
+      addScreen: 0,
+      addedStreamer: {
+        name: '',
+        imgUrl: '',
+        streamerId: -1
+      },
+      error: ''
+    });
+  }
+
+  addProfileValidator() {
+    const twitch = /https:\/\/www\.twitch\.tv\/[\w]{3,24}$/;
+    const yt = /https:\/\/www\.youtube\.com\/channel\/.+/i;
+    const urlCheck = (yt.test(this.state.profileAdd.urlValue) ||
+    twitch.test(this.state.profileAdd.urlValue));
+    return urlCheck;
+  }
+
   modalCloser(event) {
     if (event.target.className.includes('modal-shadow') ||
     event.target.className.includes('close')) {
@@ -128,12 +283,22 @@ export default class App extends React.Component {
         modal: {
           isOpen: false,
           streamerId: 0
+        },
+        profileAdd: {
+          isOpen: false
         }
       });
     }
   }
 
-  handleChange(event) {
+  dropdownHandler(event) {
+    if (event.target.classList.contains('dropdown')) {
+      const newDropdown = !(this.state.dropdown);
+      this.setState({ dropdown: newDropdown });
+    }
+  }
+
+  handleSearchbarChange(event) {
     this.setState({
       search: {
         isSearching: !!event.target.value.length,
@@ -147,9 +312,16 @@ export default class App extends React.Component {
       (this.state.loading)
         ? null
         : <Home profileInfo={this.state.streamers} favIds={this.state.favIds}
-        starClick={this.starClickHandler} modalClick={this.modalClickHandler}
+        starClick={this.starClickHandler} modalProfileClick={this.modalProfileHandler}
         modalCloser={this.modalCloser} modalData={this.state.modal}
-        handleChange={this.handleChange} searchData={this.state.search}/>
+        handleSearchbarChange={this.handleSearchbarChange} dropdown={this.state.dropdown}
+        dropdownHandler={this.dropdownHandler} addModalClick={this.addProfileModalHandler}
+        addModal={this.state.profileAdd} addScreen={this.state.addScreen}
+        addData={this.state.addedStreamer} addError={this.state.error}
+          searchData={this.state.search} addProfileChange={this.addProfileChange}
+        addProfileValidator={this.addProfileValidator()} addProfileSubmit={this.addProfileSubmit}
+        clickReset={this.clickReset} clickYes={this.clickYes} clickClose={this.clickClose} />
+
     );
   }
 }

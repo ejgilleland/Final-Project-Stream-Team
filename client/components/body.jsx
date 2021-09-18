@@ -7,10 +7,10 @@ function Body(props) {
     name={element.displayName} imgUrl={element.profileImgUrl}
     twitch={element.isTwitch} isFav={props.favIds.includes(element.streamerId)}
     recentVideo={element.recentVideo} starClick={props.starClick}
-    modalClick={props.modalClick} modalCloser={props.modalCloser}
+    modalProfileClick={props.modalProfileClick} modalCloser={props.modalCloser}
     modal={((props.modalData.streamerId === element.streamerId) && props.modalData.isOpen)}
     description={element.description}
-    channel={(element.isTwitch) ? element.twitchLogin : element.channelId}/>;
+    channel={element.channelId}/>;
   });
   const searchedProfiles = profileElements.filter(element => element.props.name.toLowerCase().includes(props.searchData.value));
   return (

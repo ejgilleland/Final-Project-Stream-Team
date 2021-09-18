@@ -1,5 +1,5 @@
 import React from 'react';
-import PopupModal from './popup-modal';
+import LargeProfilePopup from './large-profile';
 
 function SmallProfile(props) {
   return (
@@ -9,10 +9,10 @@ function SmallProfile(props) {
       width-height flex flex-wrap flex-justify-center">
         <div className="header-font flex-80 overflow-wrap height-70px flex
         flex-justify-center flex-align-center padding-halfrem hover"
-        onClick={props.modalClick}>
+        onClick={props.modalProfileClick}>
           {props.name}
         </div>
-        <div className="hover" onClick={props.modalClick}>
+        <div className="hover" onClick={props.modalProfileClick}>
           <img className="border-radius-180 max-width-img" src={props.imgUrl} />
         </div>
         <ul className="flex liststyle-none padding-halfrem margin-0
@@ -47,7 +47,7 @@ function SmallProfile(props) {
         </ul>
       </div>
       {(props.modal)
-        ? <PopupModal name={props.name} imgUrl={props.imgUrl} twitch={props.twitch}
+        ? <LargeProfilePopup name={props.name} imgUrl={props.imgUrl} twitch={props.twitch}
         recentVideo={props.recentVideo} starClick={props.starClick}
         modalCloser={props.modalCloser} isFav={props.isFav}
         description={props.description} channel={props.channel} />

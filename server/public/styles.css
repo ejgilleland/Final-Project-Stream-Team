@@ -12,6 +12,10 @@ html {
   font-size: 26px;
 }
 
+.font-size-inherit {
+  font-size: inherit;
+}
+
 .header-font {
   font-family: 'Montserrat', sans-serif;
 }
@@ -97,10 +101,6 @@ html {
   margin-bottom: 1rem;
 }
 
-.margintest {
-  margin: 0 auto;
-}
-
 .margin-bottom-halfrem {
   margin-bottom: 0.5rem;
 }
@@ -130,6 +130,10 @@ html {
   padding-bottom: 0;
 }
 
+.padding-button {
+  padding: 0.25rem 1rem;
+}
+
 .contain {
   contain: strict;
 }
@@ -141,6 +145,10 @@ html {
 
 .width-50pct {
   width: 50%;
+}
+
+.width-90pct {
+  width: 90%;
 }
 
 .width-100pct {
@@ -230,4 +238,33 @@ html {
 
 .text-decoration-none {
   text-decoration: none;
+}
+
+.z-index {
+  z-index: 9999;
+}
+
+.block {
+  display: block;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.border {
+  border: 2px #1a1a1a solid;
+}
+
+.button:active {
+  transform: translateY(3px);
+}
+
+.button:disabled {
+  border: 2px #e8e8e8 solid;
+  color: #e8e8e8;
+}
+
+.no-border {
+  border: none;
 }
