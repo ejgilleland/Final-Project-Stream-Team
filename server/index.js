@@ -30,7 +30,7 @@ app.get('/api/likes', (req, res, next) => {
     and "streamerId" not in
       (select "streamerId"
       from "favorites")
-    order by "displayName";
+    order by lower("displayName");
   `;
   const params = [1];
   // will remove the hard coding when authorized user functionality is implemented - selecting userId of 1 for now
@@ -123,7 +123,7 @@ app.get('/api/favorites', (req, res, next) => {
     from "favorites"
     join "streamers" using ("streamerId")
     where "userId" = $1
-    order by "displayName";
+    order by lower("displayName");
   `;
   const params = [1];
   // will remove the hard coding when authorized user functionality is implemented - selecting userId of 1 for now
