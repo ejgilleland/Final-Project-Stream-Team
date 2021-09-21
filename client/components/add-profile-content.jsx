@@ -19,7 +19,7 @@ function AddProfileContent(props) {
           </label>
           <input className="width-90pct margin-top-1rem margin-bottom-1rem
           body-font font-size-inherit"
-            type="url" id="streamer-url" placeholder="https://www.twitch.tv/userName"
+            type="text" id="streamer-url" placeholder="https://www.twitch.tv/userName"
             onChange={props.urlChange}></input>
           <br />
           <input className="button margin-top-1rem font-size-inherit body-font
