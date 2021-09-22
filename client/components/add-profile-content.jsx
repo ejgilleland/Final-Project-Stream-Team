@@ -19,7 +19,7 @@ function AddProfileContent(props) {
           </label>
           <input className="width-90pct margin-top-1rem margin-bottom-1rem
           body-font font-size-inherit"
-            type="text" id="streamer-url" placeholder="https://www.twitch.tv/userName"
+            type="text" id="streamer-url" placeholder="ex: https://www.twitch.tv/userName"
             onChange={props.urlChange}></input>
           <br />
           <input className="button margin-top-1rem font-size-inherit body-font
@@ -77,10 +77,10 @@ function AddProfileContent(props) {
           <h3 className="header-font margin-0 margin-top-1rem margin-bottom-1rem">
             An error has occurred:
           </h3>
-          <div className="font-red body-font font-size-22px padding-1rem">
+          <div className="font-red body-font font-size-22px padding-1rem overflow-wrap">
             {`"${props.addError}"`}
           </div>
-          <div className="body-font font-size-22px margin-top-1rem margin-bottom-1rem">
+          <div className="body-font font-size-22px">
             Try again?
           </div>
         </div>

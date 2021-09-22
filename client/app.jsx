@@ -161,7 +161,7 @@ export default class App extends React.Component {
   addProfileSubmit(event) {
     this.setState({ addScreen: 1 });
     event.preventDefault();
-    const ytRegex = /(?<!.)(?:https:\/\/(?:www\.|m.)|www\.|m\.)?youtu\.?be\.com\/c(?:hannel)?\/([\w]{24})$/i;
+    const ytRegex = /(?<!.)(?:https:\/\/(?:www\.|m.)|www\.|m\.)?youtu\.?be\.com\/c(?:hannel)?\/((?:[\w]|-){24})$/i;
     const twitchRegex = /(?<!.)(?:https:\/\/www\.|www.)?(?:twitch\.tv\/)([\w]{3,24})$/i;
     const ytProfile = this.state.profileAdd.urlValue.match(ytRegex);
     const twitchProfile = this.state.profileAdd.urlValue.match(twitchRegex);
@@ -277,7 +277,7 @@ export default class App extends React.Component {
 
   addProfileValidator() {
     const twitch = /(?<!.)(?:https:\/\/www\.|www.)?(?:twitch\.tv\/)(?:[\w]{3,24})$/i;
-    const yt = /(?<!.)(?:https:\/\/(?:www\.|m.)|www\.|m\.)?youtu\.?be\.com\/c(?:hannel)?\/(?:[\w]{24})$/i;
+    const yt = /(?<!.)(?:https:\/\/(?:www\.|m.)|www\.|m\.)?youtu\.?be\.com\/c(?:hannel)?\/((?:[\w]|-){24})$/i;
     const urlCheck = (yt.test(this.state.profileAdd.urlValue) ||
     twitch.test(this.state.profileAdd.urlValue));
     return urlCheck;
