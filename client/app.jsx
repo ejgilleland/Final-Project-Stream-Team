@@ -161,9 +161,13 @@ export default class App extends React.Component {
   addProfileSubmit(event) {
     this.setState({ addScreen: 1 });
     event.preventDefault();
-    const splitUrl = this.state.profileAdd.urlValue.split('/');
-    const channelId = splitUrl[splitUrl.length - 1].toLowerCase();
-    fetch(`/api/streamers/${channelId}`)
+    const ytRegex = /(?<!.)(?:https:\/\/(?:www\.|m.)|www\.|m\.)?youtu\.?be\.com\/c(?:hannel)?\/((?:[\w]|-){24})$/i;
+    const twitchRegex = /(?<!.)(?:https:\/\/www\.|www.)?(?:twitch\.tv\/)([\w]{3,24})$/i;
+    const ytProfile = this.state.profileAdd.urlValue.match(ytRegex);
+    const twitchProfile = this.state.profileAdd.urlValue.match(twitchRegex);
+    const platform = (ytProfile) ? 'youtube' : 'twitch';
+    const channelId = (ytProfile) ? ytProfile[1] : twitchProfile[1].toLowerCase();
+    fetch(`/api/streamers/${channelId}/${platform}`)
       .then(response => response.json())
       .then(data => {
         if (data.error) {
@@ -192,6 +196,9 @@ export default class App extends React.Component {
             }
           });
         }
+      })
+      .catch(err => {
+        console.error(err);
       });
   }
 
@@ -269,8 +276,8 @@ export default class App extends React.Component {
   }
 
   addProfileValidator() {
-    const twitch = /https:\/\/www\.twitch\.tv\/[\w]{3,24}$/;
-    const yt = /https:\/\/www\.youtube\.com\/channel\/.+/i;
+    const twitch = /(?<!.)(?:https:\/\/www\.|www.)?(?:twitch\.tv\/)(?:[\w]{3,24})$/i;
+    const yt = /(?<!.)(?:https:\/\/(?:www\.|m.)|www\.|m\.)?youtu\.?be\.com\/c(?:hannel)?\/((?:[\w]|-){24})$/i;
     const urlCheck = (yt.test(this.state.profileAdd.urlValue) ||
     twitch.test(this.state.profileAdd.urlValue));
     return urlCheck;
