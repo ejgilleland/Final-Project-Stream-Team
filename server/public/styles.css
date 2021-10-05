@@ -105,6 +105,10 @@ html {
   margin-bottom: 0.5rem;
 }
 
+.margin-top-halfrem {
+  margin-top: 0.5rem;
+}
+
 /* padding */
 .padding-0 {
   padding: 0;

@@ -30,6 +30,10 @@ export default class App extends React.Component {
         imgUrl: '',
         streamerId: -1
       },
+      profileDelete: {
+        isOpen: false,
+        streamerId: 0
+      },
       error: ''
     };
     this.retrieveData = this.retrieveData.bind(this);
@@ -45,6 +49,8 @@ export default class App extends React.Component {
     this.clickReset = this.clickReset.bind(this);
     this.clickYes = this.clickYes.bind(this);
     this.clickClose = this.clickClose.bind(this);
+    this.deleteProfileModalHandler = this.deleteProfileModalHandler.bind(this);
+    this.deleteProfileModalCloser = this.deleteProfileModalCloser.bind(this);
   }
 
   retrieveData() {
@@ -139,6 +145,28 @@ export default class App extends React.Component {
         streamerId
       }
     });
+  }
+
+  deleteProfileModalHandler(event) {
+    const streamerId = parseInt(event.target.closest('div.small-profile').id, 10);
+    this.setState({
+      profileDelete: {
+        isOpen: true,
+        streamerId
+      }
+    });
+  }
+
+  deleteProfileModalCloser(event) {
+    if (event.target.className.includes('modal-shadow') ||
+      event.target.className.includes('close')) {
+      this.setState({
+        profileDelete: {
+          isOpen: false,
+          streamerId: 0
+        }
+      });
+    }
   }
 
   addProfileModalHandler(event) {
@@ -325,9 +353,12 @@ export default class App extends React.Component {
         dropdownHandler={this.dropdownHandler} addModalClick={this.addProfileModalHandler}
         addModal={this.state.profileAdd} addScreen={this.state.addScreen}
         addData={this.state.addedStreamer} addError={this.state.error}
-          searchData={this.state.search} addProfileChange={this.addProfileChange}
+        searchData={this.state.search} addProfileChange={this.addProfileChange}
         addProfileValidator={this.addProfileValidator()} addProfileSubmit={this.addProfileSubmit}
-        clickReset={this.clickReset} clickYes={this.clickYes} clickClose={this.clickClose} />
+        clickReset={this.clickReset} clickYes={this.clickYes} clickClose={this.clickClose}
+        deleteModalClick={this.deleteProfileModalHandler}
+        deleteModalClose={this.deleteProfileModalCloser}
+        deleteModal={this.state.profileDelete} />
 
     );
   }

@@ -29,7 +29,8 @@ export default function Home(props) {
       <Body data={props.profileInfo} favIds={props.favIds}
       starClick={props.starClick} modalProfileClick={props.modalProfileClick}
       modalCloser={props.modalCloser} modalData={props.modalData}
-      searchData={props.searchData}/>
+      searchData={props.searchData} deleteModalClick={props.deleteModalClick}
+      deleteModal={props.deleteModal} deleteModalClose={props.deleteModalClose} />
     </div>
   );
 }

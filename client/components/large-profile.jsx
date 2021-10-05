@@ -13,8 +13,9 @@ function LargeProfilePopup(props) {
         position-fixed breakpoint-modal-content center-text">
           <ul className="flex-10 flex liststyle-none padding-1rem
           padding-bottom-0 margin-0 flex-align-center">
-            <li className="flex-10 font-size-26px hover font-red">
-              <i className="fas fa-trash-alt"></i>
+            <li className="flex-10 font-size-26px hover font-red"
+            onClick={props.deleteModalClick}>
+              <i className="fas fa-trash-alt" ></i>
             </li>
             <li className="flex-80"></li>
             <li className="close flex-10 font-size-26px font-gray"
