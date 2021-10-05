@@ -51,6 +51,7 @@ export default class App extends React.Component {
     this.clickClose = this.clickClose.bind(this);
     this.deleteProfileModalHandler = this.deleteProfileModalHandler.bind(this);
     this.deleteProfileModalCloser = this.deleteProfileModalCloser.bind(this);
+    this.deleteProfile = this.deleteProfile.bind(this);
   }
 
   retrieveData() {
@@ -167,6 +168,39 @@ export default class App extends React.Component {
         }
       });
     }
+  }
+
+  deleteProfile() {
+    const init = {
+      method: 'DELETE'
+    };
+    if (this.state.favIds.includes(this.state.profileDelete.streamerId)) {
+      fetch(`/api/favorites/${this.state.userId}/${this.state.profileDelete.streamerId}`, init)
+        .then(response => {
+          // if (response.status === 204) {
+          //   r
+          // }
+        })
+        .catch(err => console.error(err));
+    }
+    fetch(`/api/likes/${this.state.userId}/${this.state.profileDelete.streamerId}`, init)
+      .then(response => {
+        if (response.status === 204) {
+          this.setState({
+            profileDelete: {
+              isOpen: false,
+              streamerId: 0
+            },
+            modal: {
+              isOpen: false,
+              streamerId: 0
+            }
+          });
+          this.retrieveData();
+        }
+      }
+      )
+      .catch(err => console.error(err));
   }
 
   addProfileModalHandler(event) {
@@ -358,7 +392,7 @@ export default class App extends React.Component {
         clickReset={this.clickReset} clickYes={this.clickYes} clickClose={this.clickClose}
         deleteModalClick={this.deleteProfileModalHandler}
         deleteModalClose={this.deleteProfileModalCloser}
-        deleteModal={this.state.profileDelete} />
+        deleteModal={this.state.profileDelete} deleteYes={this.deleteProfile}/>
 
     );
   }

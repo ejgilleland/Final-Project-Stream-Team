@@ -30,7 +30,8 @@ export default function Home(props) {
       starClick={props.starClick} modalProfileClick={props.modalProfileClick}
       modalCloser={props.modalCloser} modalData={props.modalData}
       searchData={props.searchData} deleteModalClick={props.deleteModalClick}
-      deleteModal={props.deleteModal} deleteModalClose={props.deleteModalClose} />
+      deleteModal={props.deleteModal} deleteModalClose={props.deleteModalClose}
+      deleteYes={props.deleteYes}/>
     </div>
   );
 }

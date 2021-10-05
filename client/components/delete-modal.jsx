@@ -34,8 +34,7 @@ function DeleteProfileModal(props) {
             <li className="flex-10">
               <button className="button margin-top-1rem margin-lr-1rem
             font-size-inherit body-font border-radius padding-button font-black
-            background-gray border" >
-            {/* // onClick={props.clickYes}> */}
+            background-gray border" onClick={props.deleteYes}>
                 Yes
               </button>
             </li>

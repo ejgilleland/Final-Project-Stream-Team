@@ -24,7 +24,7 @@ function Body(props) {
       }
       {(props.deleteModal.isOpen)
         ? <DeleteProfileModal deleteModal={props.deleteModal} data={props.data}
-          deleteModalClose={props.deleteModalClose}/>
+          deleteModalClose={props.deleteModalClose} deleteYes={props.deleteYes}/>
         : null
       }
     </div>
