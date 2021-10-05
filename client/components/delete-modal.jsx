@@ -32,14 +32,14 @@ function DeleteProfileModal(props) {
           <ul className="flex liststyle-none flex flex-20 padding-0 margin-top-1rem
           padding-bottom-0 margin-0 margin-bottom-halfrem flex-justify-around">
             <li className="flex-10">
-              <button className="button margin-top-1rem margin-lr-1rem
+              <button className="button hover margin-top-1rem margin-lr-1rem
             font-size-inherit body-font border-radius padding-button font-black
             background-gray border" onClick={props.deleteYes}>
                 Yes
               </button>
             </li>
             <li className="flex-10">
-              <button className="close button margin-top-1rem margin-lr-1rem
+              <button className="button delete-closer hover margin-top-1rem margin-lr-1rem
               font-size-inherit body-font border-radius padding-button font-black
               background-gray border" onClick={props.deleteModalClose}>
                 No

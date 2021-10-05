@@ -160,7 +160,8 @@ export default class App extends React.Component {
 
   deleteProfileModalCloser(event) {
     if (event.target.className.includes('modal-shadow') ||
-      event.target.className.includes('close')) {
+      event.target.className.includes('close') ||
+      event.target.className.includes('delete-closer')) {
       this.setState({
         profileDelete: {
           isOpen: false,
@@ -176,11 +177,7 @@ export default class App extends React.Component {
     };
     if (this.state.favIds.includes(this.state.profileDelete.streamerId)) {
       fetch(`/api/favorites/${this.state.userId}/${this.state.profileDelete.streamerId}`, init)
-        .then(response => {
-          // if (response.status === 204) {
-          //   r
-          // }
-        })
+        .then(response => {})
         .catch(err => console.error(err));
     }
     fetch(`/api/likes/${this.state.userId}/${this.state.profileDelete.streamerId}`, init)
