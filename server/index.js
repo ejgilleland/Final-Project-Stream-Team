@@ -43,6 +43,25 @@ app.get('/api/likes', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.get('/api/favorites', (req, res, next) => {
+  const sql = `
+    select *
+    from "favorites"
+    join "streamers" using ("streamerId")
+    where "userId" = $1
+    order by lower("displayName");
+  `;
+  const params = [1];
+  // will remove the hard coding when authorized user functionality is implemented - selecting userId of 1 for now
+  db
+    .query(sql, params)
+    .then(data => {
+      const favorites = data.rows;
+      res.status(200).json(favorites);
+    })
+    .catch(err => next(err));
+});
+
 app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
   const sql = `
   select *
@@ -78,11 +97,11 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
         } else {
           const values = data.data[0];
           const sql = `
-        insert into "streamers" ("channelId", "displayName", "description",
-        "profileImgUrl", "recentVideo", "isTwitch","twitchId", "isLive")
-        values ($1, $2, $3, $4, $5, $6, $7, $8)
-        returning *;
-        `;
+          insert into "streamers" ("channelId", "displayName", "description",
+          "profileImgUrl", "recentVideo", "isTwitch","twitchId", "isLive")
+          values ($1, $2, $3, $4, $5, $6, $7, $8)
+          returning *;
+          `;
           const params = [values.login, values.display_name, values.description,
             values.profile_image_url, '', true, values.id, false];
           return db.query(sql, params);
@@ -103,10 +122,10 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
         const videoUrl = data.data[0].url;
         const channelId = data.data[0].user_login;
         const sql = `
-      update "streamers"
-      set "recentVideo" = $1
-      where "channelId" = $2
-      returning *;
+        update "streamers"
+        set "recentVideo" = $1
+        where "channelId" = $2
+        returning *;
       `;
         const params = [videoUrl, channelId];
         return db.query(sql, params);
@@ -162,25 +181,6 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
     .catch(err => next(err));
 });
 
-app.get('/api/favorites', (req, res, next) => {
-  const sql = `
-    select *
-    from "favorites"
-    join "streamers" using ("streamerId")
-    where "userId" = $1
-    order by lower("displayName");
-  `;
-  const params = [1];
-  // will remove the hard coding when authorized user functionality is implemented - selecting userId of 1 for now
-  db
-    .query(sql, params)
-    .then(data => {
-      const favorites = data.rows;
-      res.status(200).json(favorites);
-    })
-    .catch(err => next(err));
-});
-
 app.post('/api/likes/:userId/:streamerId', (req, res, next) => {
   const sql = `
   insert into "likes" ("userId", "streamerId")
@@ -213,6 +213,93 @@ app.post('/api/favorites/:userId/:streamerId', (req, res, next) => {
       res.status(201).send();
     })
     .catch(err => next(err));
+});
+
+app.put('/api/streamers/current', (req, res, next) => {
+  const sql = `
+  select "streamerId", "channelId", "isTwitch", "lastUpdated"
+  from "streamers"
+  `;
+  db
+    .query(sql)
+    .then(data => {
+      const date = Date.now();
+      for (let i = 0; i < data.rows.length; i++) {
+        if (date > (data.rows[i].lastUpdated.getTime() - (25200000) + 43200000)) {
+          if (data.rows[i].isTwitch) {
+            const lastItem = (i === (data.rows.length - 1));
+            const channelId = data.rows[i].channelId;
+            const init = {
+              headers: {
+                Authorization: `Bearer ${process.env.TWITCH_TOKEN}`,
+                'Client-Id': process.env.TWITCH_ID,
+                type: 'archive'
+              }
+            };
+            fetch(`https://api.twitch.tv/helix/users?login=${channelId}`, init)
+              .then(response => response.json())
+              .then(data => {
+                if (!data.data.length) {
+                  throw new ClientError(404, `User '${channelId}' not found`);
+                } else {
+                  const values = data.data[0];
+                  const sql = `
+                  update "streamers"
+                  set "displayName" = $1,
+                    "description" = $2,
+                    "profileImgUrl" = $3,
+                    "lastUpdated" = CURRENT_TIMESTAMP
+                  where "channelId" = $4
+                  returning *;
+                  `;
+                  const params = [values.display_name, values.description,
+                    values.profile_image_url, channelId];
+                  return db.query(sql, params);
+                }
+              })
+              .then(data => {
+                if (lastItem) { next(); }
+              })
+              .catch(err => next(err));
+          } else if (!data.rows[i].isTwitch) {
+            const lastItem = (i === (data.rows.length - 1));
+            const channelId = data.rows[i].channelId;
+            fetch(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${data.rows[i].channelId}&key=${process.env.YOUTUBE_KEY}`)
+              .then(response => response.json())
+              .then(data => {
+                if (!data.pageInfo.totalResults) {
+                  throw new ClientError(404, `User with ID '${channelId}' not found`);
+                } else {
+                  const values = data.items[0].snippet;
+                  const sql = `
+                  update "streamers"
+                  set "displayName" = $1,
+                    "description" = $2,
+                    "profileImgUrl" = $3,
+                    "lastUpdated" = CURRENT_TIMESTAMP
+                  where "channelId" = $4
+                  returning *;
+                  `;
+                  const params = [values.title, values.description,
+                    values.thumbnails.medium.url, channelId];
+                  return db.query(sql, params);
+                }
+              })
+              .then(data => {
+                if (lastItem) { next(); }
+              })
+              .catch(err => next(err));
+          }
+        } else {
+          res.status(200).send();
+        }
+      }
+    })
+    .catch(err => next(err));
+});
+
+app.put('/api/streamers/current', (req, res, next) => {
+  res.status(200).send();
 });
 
 app.delete('/api/likes/:userId/:streamerId', (req, res, next) => {
