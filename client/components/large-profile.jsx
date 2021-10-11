@@ -4,6 +4,9 @@ function LargeProfilePopup(props) {
   const link = (props.twitch)
     ? `https://www.twitch.tv/${props.channel}`
     : `https://www.youtube.com/channel/${props.channel}`;
+  const descriptionLineBreaks = props.description.replace(/\\n/g, `
+                `);
+  const descBreaksQuotes = descriptionLineBreaks.replace(/\\"/g, '"');
   return (
     <div className="modal-shadow background-grayed-out font-white width-100pct
     height-100pct position-fixed top-0 left-0" onClick={props.modalCloser}>
@@ -13,8 +16,9 @@ function LargeProfilePopup(props) {
         position-fixed breakpoint-modal-content center-text">
           <ul className="flex-10 flex liststyle-none padding-1rem
           padding-bottom-0 margin-0 flex-align-center">
-            <li className="flex-10 font-size-26px hover font-red">
-              <i className="fas fa-trash-alt"></i>
+            <li className="flex-10 font-size-26px hover font-red"
+            onClick={props.deleteModalClick}>
+              <i className="fas fa-trash-alt" ></i>
             </li>
             <li className="flex-80"></li>
             <li className="close flex-10 font-size-26px font-gray"
@@ -37,7 +41,7 @@ function LargeProfilePopup(props) {
             <div className="modal-text-container-breakpoint margin-lr-1rem">
               <p className="scrolltext scrollbar body-font font-size-22px
               margin-0 text-overflow-scroll hyphens overflow-wrap">
-                {props.description}
+                {descBreaksQuotes}
               </p>
             </div>
           </div>

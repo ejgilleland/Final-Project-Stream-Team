@@ -1,5 +1,6 @@
 import React from 'react';
 import SmallProfile from './small-profile';
+import DeleteProfileModal from './delete-modal';
 
 function Body(props) {
   const profileElements = props.data.map(element => {
@@ -9,7 +10,7 @@ function Body(props) {
     recentVideo={element.recentVideo} starClick={props.starClick}
     modalProfileClick={props.modalProfileClick} modalCloser={props.modalCloser}
     modal={((props.modalData.streamerId === element.streamerId) && props.modalData.isOpen)}
-    description={element.description}
+    description={element.description} deleteModalClick={props.deleteModalClick}
     channel={element.channelId}/>;
   });
   const searchedProfiles = profileElements.filter(element => element.props.name.toLowerCase().includes(props.searchData.value));
@@ -20,6 +21,11 @@ function Body(props) {
       {(props.searchData.isSearching)
         ? (searchedProfiles.length > 0) ? searchedProfiles : 'There\'s nothing here!'
         : profileElements
+      }
+      {(props.deleteModal.isOpen)
+        ? <DeleteProfileModal deleteModal={props.deleteModal} data={props.data}
+          deleteModalClose={props.deleteModalClose} deleteYes={props.deleteYes}/>
+        : null
       }
     </div>
   );

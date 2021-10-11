@@ -50,7 +50,8 @@ function SmallProfile(props) {
         ? <LargeProfilePopup name={props.name} imgUrl={props.imgUrl} twitch={props.twitch}
         recentVideo={props.recentVideo} starClick={props.starClick}
         modalCloser={props.modalCloser} isFav={props.isFav}
-        description={props.description} channel={props.channel} />
+        description={props.description} channel={props.channel}
+        deleteModalClick={props.deleteModalClick} />
         : null
       }
     </div>
