@@ -102,8 +102,8 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
           values ($1, $2, $3, $4, $5, $6, $7, $8)
           returning *;
           `;
-          const params = [values.id, values.display_name, values.description,
-            values.profile_image_url, '', true, values.login, false];
+          const params = [values.login, values.display_name, values.description,
+            values.profile_image_url, '', true, values.id, false];
           return db.query(sql, params);
         }
       })
