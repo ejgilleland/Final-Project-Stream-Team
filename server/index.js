@@ -240,7 +240,8 @@ app.put('/api/streamers/current', (req, res, next) => {
               .then(response => response.json())
               .then(data => {
                 if (!data.data.length) {
-                  throw new ClientError(404, `User '${channelId}' not found`);
+                  console.error(`User '${channelId}' not found`);
+
                 } else {
                   const values = data.data[0];
                   const sql = `
@@ -268,7 +269,8 @@ app.put('/api/streamers/current', (req, res, next) => {
               .then(response => response.json())
               .then(data => {
                 if (!data.pageInfo.totalResults) {
-                  throw new ClientError(404, `User with ID '${channelId}' not found`);
+                  console.error(`User '${channelId}' not found`);
+
                 } else {
                   const values = data.items[0].snippet;
                   const sql = `
@@ -291,7 +293,8 @@ app.put('/api/streamers/current', (req, res, next) => {
               .catch(err => next(err));
           }
         } else {
-          res.status(200).send();
+          const lastItem = (i === (data.rows.length - 1));
+          if (lastItem) { next(); }
         }
       }
     })

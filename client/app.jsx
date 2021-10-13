@@ -52,6 +52,7 @@ export default class App extends React.Component {
     this.deleteProfileModalHandler = this.deleteProfileModalHandler.bind(this);
     this.deleteProfileModalCloser = this.deleteProfileModalCloser.bind(this);
     this.deleteProfile = this.deleteProfile.bind(this);
+    this.checkUpdatedProfile = this.checkUpdatedProfile.bind(this);
   }
 
   retrieveData() {
@@ -89,10 +90,22 @@ export default class App extends React.Component {
       .catch(err => console.error(err));
   }
 
+  checkUpdatedProfile() {
+    const init = {
+      method: 'PUT'
+    };
+    fetch('/api/streamers/current', init)
+      .then(response => {
+        if (response.ok) { this.retrieveData(); }
+      })
+      .catch(err => console.error(err));
+  }
+
   componentDidMount() {
     this.setState({ userId: 1 });
     // userId temporarily hard coded to 1 until authorization is set up
-    this.retrieveData();
+    this.checkUpdatedProfile();
+    window.setInterval(this.checkUpdatedProfile, 600000);
   }
 
   starClickHandler(event) {
