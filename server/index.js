@@ -102,8 +102,8 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
           values ($1, $2, $3, $4, $5, $6, $7, $8)
           returning *;
           `;
-          const params = [values.login, values.display_name, values.description,
-            values.profile_image_url, '', true, values.id, false];
+          const params = [values.id, values.display_name, values.description,
+            values.profile_image_url, '', true, values.login, false];
           return db.query(sql, params);
         }
       })
@@ -217,7 +217,7 @@ app.post('/api/favorites/:userId/:streamerId', (req, res, next) => {
 
 app.put('/api/streamers/current', (req, res, next) => {
   const sql = `
-  select "streamerId", "channelId", "isTwitch", "lastUpdated"
+  select "streamerId", "displayName", "channelId", "isTwitch", "lastUpdated", "twitchId"
   from "streamers"
   `;
   db
@@ -228,7 +228,8 @@ app.put('/api/streamers/current', (req, res, next) => {
         if (date > (data.rows[i].lastUpdated.getTime() - (25200000) + 43200000)) {
           if (data.rows[i].isTwitch) {
             const lastItem = (i === (data.rows.length - 1));
-            const channelId = data.rows[i].channelId;
+            const twitchId = data.rows[i].twitchId;
+            const displayName = data.rows[i].channelId;
             const init = {
               headers: {
                 Authorization: `Bearer ${process.env.TWITCH_TOKEN}`,
@@ -236,25 +237,25 @@ app.put('/api/streamers/current', (req, res, next) => {
                 type: 'archive'
               }
             };
-            fetch(`https://api.twitch.tv/helix/users?login=${channelId}`, init)
+            fetch(`https://api.twitch.tv/helix/users?id=${twitchId}`, init)
               .then(response => response.json())
               .then(data => {
                 if (!data.data.length) {
-                  console.error(`User '${channelId}' not found`);
-
+                  console.error(`User '${displayName}' not found`);
                 } else {
                   const values = data.data[0];
                   const sql = `
                   update "streamers"
-                  set "displayName" = $1,
-                    "description" = $2,
-                    "profileImgUrl" = $3,
+                  set "channelId" = $1,
+                    "displayName" = $2,
+                    "description" = $3,
+                    "profileImgUrl" = $4,
                     "lastUpdated" = CURRENT_TIMESTAMP
-                  where "channelId" = $4
+                  where "twitchId" = $5
                   returning *;
                   `;
-                  const params = [values.display_name, values.description,
-                    values.profile_image_url, channelId];
+                  const params = [values.login, values.display_name, values.description,
+                    values.profile_image_url, twitchId];
                   return db.query(sql, params);
                 }
               })
@@ -265,12 +266,12 @@ app.put('/api/streamers/current', (req, res, next) => {
           } else if (!data.rows[i].isTwitch) {
             const lastItem = (i === (data.rows.length - 1));
             const channelId = data.rows[i].channelId;
+            const displayName = data.rows[i].channelId;
             fetch(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${data.rows[i].channelId}&key=${process.env.YOUTUBE_KEY}`)
               .then(response => response.json())
               .then(data => {
                 if (!data.pageInfo.totalResults) {
-                  console.error(`User '${channelId}' not found`);
-
+                  console.error(`User '${displayName}' not found`);
                 } else {
                   const values = data.items[0].snippet;
                   const sql = `
