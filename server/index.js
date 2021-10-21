@@ -103,7 +103,7 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
           returning *;
           `;
           const params = [values.login, values.display_name, values.description,
-            values.profile_image_url, '', true, values.id, false];
+            values.profile_image_url, `https://www.twitch.tv/${values.login}`, true, values.id, false];
           return db.query(sql, params);
         }
       })
@@ -119,17 +119,27 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
       })
       .then(response => response.json())
       .then(data => {
-        const videoUrl = data.data[0].url;
-        const channelId = data.data[0].user_login;
-        const sql = `
-        update "streamers"
-        set "recentVideo" = $1,
-        "videoUpdated" = CURRENT_TIMESTAMP
-        where "channelId" = $2
-        returning *;
-      `;
-        const params = [videoUrl, channelId];
-        return db.query(sql, params);
+        if (!data.data.length) {
+          const sql = `
+            select *
+            from "streamers"
+            where "channelId" = $1;
+            `;
+          const params = [req.params.channelId];
+          return db.query(sql, params);
+        } else {
+          const videoUrl = data.data[0].url;
+          const channelId = data.data[0].user_login;
+          const sql = `
+          update "streamers"
+          set "recentVideo" = $1,
+          "videoUpdated" = CURRENT_TIMESTAMP
+          where "channelId" = $2
+          returning *;
+          `;
+          const params = [videoUrl, channelId];
+          return db.query(sql, params);
+        }
       })
       .then(data => {
         const profile = data.rows[0];
@@ -309,7 +319,7 @@ app.put('/api/streamers/videos/current', (req, res, next) => {
     .then(data => {
       const date = Date.now();
       for (let i = 0; i < data.rows.length; i++) {
-        if (date > (data.rows[i].videoUpdated.getTime() - (25200000) + 7200000)) {
+        if (date > (data.rows[i].videoUpdated.getTime() - (25200000) - 7200000)) {
           if (data.rows[i].isTwitch) {
             const lastItem = (i === (data.rows.length - 1));
             const twitchId = data.rows[i].twitchId;
@@ -323,6 +333,15 @@ app.put('/api/streamers/videos/current', (req, res, next) => {
             fetch(`https://api.twitch.tv/helix/videos?user_id=${twitchId}`, init)
               .then(response => response.json())
               .then(data => {
+                if (!data.data.length) {
+                  const sql = `
+                  update "streamers"
+                  set "videoUpdated" = CURRENT_TIMESTAMP
+                  where "twitchId" = $1;
+                  `;
+                  const params = [twitchId];
+                  return db.query(sql, params);
+                }
                 const values = data.data[0];
                 const sql = `
                 update "streamers"
