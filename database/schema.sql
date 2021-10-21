@@ -28,6 +28,7 @@ CREATE TABLE "streamers" (
 	"twitchId" TEXT,
 	"isLive" BOOLEAN NOT NULL,
 	"lastUpdated" TIMESTAMP NOT NULL default now(),
+	"videoUpdated" TIMESTAMP NOT NULL default '2000-01-01 00:00:00',
 	CONSTRAINT "streamers_pk" PRIMARY KEY ("streamerId")
 ) WITH (
   OIDS=FALSE

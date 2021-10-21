@@ -123,7 +123,8 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
         const channelId = data.data[0].user_login;
         const sql = `
         update "streamers"
-        set "recentVideo" = $1
+        set "recentVideo" = $1,
+        "videoUpdated" = CURRENT_TIMESTAMP
         where "channelId" = $2
         returning *;
       `;
@@ -167,7 +168,8 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
       const videoId = data.items[recentUploadIndex].contentDetails.upload.videoId;
       const sql = `
       update "streamers"
-      set "recentVideo" = $1
+      set "recentVideo" = $1,
+      "videoUpdated" = CURRENT_TIMESTAMP
       where "channelId" = $2
       returning *;
       `;
@@ -303,6 +305,96 @@ app.put('/api/streamers/current', (req, res, next) => {
 });
 
 app.put('/api/streamers/current', (req, res, next) => {
+  res.status(200).send();
+});
+
+app.put('/api/streamers/videos/current', (req, res, next) => {
+  const sql = `
+  select "streamerId", "displayName", "channelId", "isTwitch", "twitchId",
+  "videoUpdated"
+  from "streamers"
+  `;
+  db
+    .query(sql)
+    .then(data => {
+      const date = Date.now();
+      for (let i = 0; i < data.rows.length; i++) {
+        if (date > (data.rows[i].videoUpdated.getTime() - (25200000) - 7200000)) {
+          if (data.rows[i].isTwitch) {
+            const lastItem = (i === (data.rows.length - 1));
+            const twitchId = data.rows[i].twitchId;
+            const displayName = data.rows[i].channelId;
+            const init = {
+              headers: {
+                Authorization: `Bearer ${process.env.TWITCH_TOKEN}`,
+                'Client-Id': process.env.TWITCH_ID,
+                type: 'archive'
+              }
+            };
+            fetch(`https://api.twitch.tv/helix/videos?user_id=${twitchId}`, init)
+              .then(response => response.json())
+              .then(data => {
+                if (!data.data.length) {
+                  console.error(`User '${displayName}' not found`);
+                } else {
+                  const values = data.data[0];
+                  const sql = `
+                  update "streamers"
+                  set "recentVideo" = $1,
+                  "videoUpdated" = CURRENT_TIMESTAMP
+                  where "channelId" = $2
+                  returning *;
+                  `;
+                  const params = [values.url, values.user_login];
+                  return db.query(sql, params);
+                }
+              })
+              .then(data => {
+                if (lastItem) { next(); }
+              })
+              .catch(err => next(err));
+          } else if (!data.rows[i].isTwitch) {
+
+            const lastItem = (i === (data.rows.length - 1));
+            if (lastItem) { next(); }
+            // const channelId = data.rows[i].channelId;
+            // const displayName = data.rows[i].channelId;
+            // fetch(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${data.rows[i].channelId}&key=${process.env.YOUTUBE_KEY}`)
+            //   .then(response => response.json())
+            //   .then(data => {
+            //     if (!data.pageInfo.totalResults) {
+            //       console.error(`User '${displayName}' not found`);
+            //     } else {
+            //       const values = data.items[0].snippet;
+            //       const sql = `
+            //       update "streamers"
+            //       set "displayName" = $1,
+            //         "description" = $2,
+            //         "profileImgUrl" = $3,
+            //         "lastUpdated" = CURRENT_TIMESTAMP
+            //       where "channelId" = $4
+            //       returning *;
+            //       `;
+            //       const params = [values.title, values.description,
+            //       values.thumbnails.medium.url, channelId];
+            //       return db.query(sql, params);
+            //     }
+            //   })
+            //   .then(data => {
+            //     if (lastItem) { next(); }
+            //   })
+            //   .catch(err => next(err));
+          }
+        } else {
+          const lastItem = (i === (data.rows.length - 1));
+          if (lastItem) { next(); }
+        }
+      }
+    })
+    .catch(err => next(err));
+});
+
+app.put('/api/streamers/videos/current', (req, res, next) => {
   res.status(200).send();
 });
 
