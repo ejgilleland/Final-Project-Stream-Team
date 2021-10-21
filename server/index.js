@@ -227,11 +227,10 @@ app.put('/api/streamers/current', (req, res, next) => {
     .then(data => {
       const date = Date.now();
       for (let i = 0; i < data.rows.length; i++) {
-        if (date > (data.rows[i].lastUpdated.getTime() - (25200000) + 43200000)) {
+        if (date > (data.rows[i].lastUpdated.getTime() - (25200000) - 43200000)) {
           if (data.rows[i].isTwitch) {
             const lastItem = (i === (data.rows.length - 1));
             const twitchId = data.rows[i].twitchId;
-            const displayName = data.rows[i].channelId;
             const init = {
               headers: {
                 Authorization: `Bearer ${process.env.TWITCH_TOKEN}`,
@@ -242,24 +241,20 @@ app.put('/api/streamers/current', (req, res, next) => {
             fetch(`https://api.twitch.tv/helix/users?id=${twitchId}`, init)
               .then(response => response.json())
               .then(data => {
-                if (!data.data.length) {
-                  console.error(`User '${displayName}' not found`);
-                } else {
-                  const values = data.data[0];
-                  const sql = `
-                  update "streamers"
-                  set "channelId" = $1,
-                    "displayName" = $2,
-                    "description" = $3,
-                    "profileImgUrl" = $4,
-                    "lastUpdated" = CURRENT_TIMESTAMP
-                  where "twitchId" = $5
-                  returning *;
-                  `;
-                  const params = [values.login, values.display_name, values.description,
-                    values.profile_image_url, twitchId];
-                  return db.query(sql, params);
-                }
+                const values = data.data[0];
+                const sql = `
+                update "streamers"
+                set "channelId" = $1,
+                  "displayName" = $2,
+                  "description" = $3,
+                  "profileImgUrl" = $4,
+                  "lastUpdated" = CURRENT_TIMESTAMP
+                where "twitchId" = $5
+                returning *;
+                `;
+                const params = [values.login, values.display_name, values.description,
+                  values.profile_image_url, twitchId];
+                return db.query(sql, params);
               })
               .then(data => {
                 if (lastItem) { next(); }
@@ -268,27 +263,22 @@ app.put('/api/streamers/current', (req, res, next) => {
           } else if (!data.rows[i].isTwitch) {
             const lastItem = (i === (data.rows.length - 1));
             const channelId = data.rows[i].channelId;
-            const displayName = data.rows[i].channelId;
-            fetch(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${data.rows[i].channelId}&key=${process.env.YOUTUBE_KEY}`)
+            fetch(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${channelId}&key=${process.env.YOUTUBE_KEY}`)
               .then(response => response.json())
               .then(data => {
-                if (!data.pageInfo.totalResults) {
-                  console.error(`User '${displayName}' not found`);
-                } else {
-                  const values = data.items[0].snippet;
-                  const sql = `
-                  update "streamers"
-                  set "displayName" = $1,
-                    "description" = $2,
-                    "profileImgUrl" = $3,
-                    "lastUpdated" = CURRENT_TIMESTAMP
-                  where "channelId" = $4
-                  returning *;
-                  `;
-                  const params = [values.title, values.description,
-                    values.thumbnails.medium.url, channelId];
-                  return db.query(sql, params);
-                }
+                const values = data.items[0].snippet;
+                const sql = `
+                update "streamers"
+                set "displayName" = $1,
+                  "description" = $2,
+                  "profileImgUrl" = $3,
+                  "lastUpdated" = CURRENT_TIMESTAMP
+                where "channelId" = $4
+                returning *;
+                `;
+                const params = [values.title, values.description,
+                  values.thumbnails.medium.url, channelId];
+                return db.query(sql, params);
               })
               .then(data => {
                 if (lastItem) { next(); }
@@ -323,7 +313,6 @@ app.put('/api/streamers/videos/current', (req, res, next) => {
           if (data.rows[i].isTwitch) {
             const lastItem = (i === (data.rows.length - 1));
             const twitchId = data.rows[i].twitchId;
-            const displayName = data.rows[i].channelId;
             const init = {
               headers: {
                 Authorization: `Bearer ${process.env.TWITCH_TOKEN}`,
@@ -334,56 +323,44 @@ app.put('/api/streamers/videos/current', (req, res, next) => {
             fetch(`https://api.twitch.tv/helix/videos?user_id=${twitchId}`, init)
               .then(response => response.json())
               .then(data => {
-                if (!data.data.length) {
-                  console.error(`User '${displayName}' not found`);
-                } else {
-                  const values = data.data[0];
-                  const sql = `
-                  update "streamers"
-                  set "recentVideo" = $1,
-                  "videoUpdated" = CURRENT_TIMESTAMP
-                  where "channelId" = $2
-                  returning *;
-                  `;
-                  const params = [values.url, values.user_login];
-                  return db.query(sql, params);
-                }
+                const values = data.data[0];
+                const sql = `
+                update "streamers"
+                set "recentVideo" = $1,
+                "videoUpdated" = CURRENT_TIMESTAMP
+                where "channelId" = $2
+                returning *;
+                `;
+                const params = [values.url, values.user_login];
+                return db.query(sql, params);
               })
               .then(data => {
                 if (lastItem) { next(); }
               })
               .catch(err => next(err));
           } else if (!data.rows[i].isTwitch) {
-
             const lastItem = (i === (data.rows.length - 1));
-            if (lastItem) { next(); }
-            // const channelId = data.rows[i].channelId;
-            // const displayName = data.rows[i].channelId;
-            // fetch(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${data.rows[i].channelId}&key=${process.env.YOUTUBE_KEY}`)
-            //   .then(response => response.json())
-            //   .then(data => {
-            //     if (!data.pageInfo.totalResults) {
-            //       console.error(`User '${displayName}' not found`);
-            //     } else {
-            //       const values = data.items[0].snippet;
-            //       const sql = `
-            //       update "streamers"
-            //       set "displayName" = $1,
-            //         "description" = $2,
-            //         "profileImgUrl" = $3,
-            //         "lastUpdated" = CURRENT_TIMESTAMP
-            //       where "channelId" = $4
-            //       returning *;
-            //       `;
-            //       const params = [values.title, values.description,
-            //       values.thumbnails.medium.url, channelId];
-            //       return db.query(sql, params);
-            //     }
-            //   })
-            //   .then(data => {
-            //     if (lastItem) { next(); }
-            //   })
-            //   .catch(err => next(err));
+            const channelId = data.rows[i].channelId;
+            fetch(`https://youtube.googleapis.com/youtube/v3/activities?part=snippet%2CcontentDetails&channelId=${channelId}&maxResults=25&key=${process.env.YOUTUBE_KEY}`)
+              .then(response => response.json())
+              .then(data => {
+                const activityTypes = data.items.map(element => element.snippet.type);
+                const recentUploadIndex = activityTypes.indexOf('upload');
+                const videoId = data.items[recentUploadIndex].contentDetails.upload.videoId;
+                const sql = `
+                update "streamers"
+                set "recentVideo" = $1,
+                "videoUpdated" = CURRENT_TIMESTAMP
+                where "channelId" = $2
+                returning *;
+                `;
+                const params = [videoId, channelId];
+                return db.query(sql, params);
+              })
+              .then(data => {
+                if (lastItem) { next(); }
+              })
+              .catch(err => next(err));
           }
         } else {
           const lastItem = (i === (data.rows.length - 1));
