@@ -227,7 +227,7 @@ app.put('/api/streamers/current', (req, res, next) => {
     .then(data => {
       const date = Date.now();
       for (let i = 0; i < data.rows.length; i++) {
-        if (date > (data.rows[i].lastUpdated.getTime() - (25200000) - 43200000)) {
+        if (date > (data.rows[i].lastUpdated.getTime() - (25200000) + 43200000)) {
           if (data.rows[i].isTwitch) {
             const lastItem = (i === (data.rows.length - 1));
             const twitchId = data.rows[i].twitchId;
@@ -309,7 +309,7 @@ app.put('/api/streamers/videos/current', (req, res, next) => {
     .then(data => {
       const date = Date.now();
       for (let i = 0; i < data.rows.length; i++) {
-        if (date > (data.rows[i].videoUpdated.getTime() - (25200000) - 7200000)) {
+        if (date > (data.rows[i].videoUpdated.getTime() - (25200000) + 7200000)) {
           if (data.rows[i].isTwitch) {
             const lastItem = (i === (data.rows.length - 1));
             const twitchId = data.rows[i].twitchId;
