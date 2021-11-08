@@ -2,6 +2,7 @@ require('dotenv/config');
 const express = require('express');
 const errorMiddleware = require('./error-middleware');
 const staticMiddleware = require('./static-middleware');
+const downloadImage = require('./download-image');
 const ClientError = require('./client-error');
 const pg = require('pg');
 const fetch = require('node-fetch');
@@ -96,6 +97,7 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
           throw new ClientError(404, `User '${req.params.channelId}' not found`);
         } else {
           const values = data.data[0];
+          downloadImage(values.profile_image_url, values.id);
           const sql = `
           insert into "streamers" ("channelId", "displayName", "description",
           "profileImgUrl", "recentVideo", "isTwitch","twitchId", "isLive")
@@ -157,6 +159,7 @@ app.get('/api/streamers/:channelId/:platform', (req, res, next) => {
         throw new ClientError(404, `User with ID '${req.params.channelId}' not found`);
       } else {
         const values = data.items[0].snippet;
+        downloadImage(values.thumbnails.medium.url, data.items[0].id);
         const sql = `
         insert into "streamers" ("channelId", "displayName", "description",
         "profileImgUrl", "recentVideo", "isTwitch","twitchId", "isLive")

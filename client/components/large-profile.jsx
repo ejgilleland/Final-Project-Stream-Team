@@ -35,7 +35,9 @@ function LargeProfilePopup(props) {
             <div className="padding-1rem-breakpoint">
               <a href={link} target="_blank" rel="noreferrer">
                 <img className="border-radius-180 larger-image-breakpoint"
-                src={props.imgUrl} />
+                src={(props.twitch)
+                  ? `./images/${props.twitchId}.png`
+                  : `./images/${props.channel}.png`} />
               </a>
             </div>
             <div className="modal-text-container-breakpoint margin-lr-1rem">
