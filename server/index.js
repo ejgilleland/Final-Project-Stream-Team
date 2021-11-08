@@ -240,7 +240,7 @@ app.put('/api/streamers/current', (req, res, next) => {
     .then(data => {
       const date = Date.now();
       for (let i = 0; i < data.rows.length; i++) {
-        if (date > (data.rows[i].lastUpdated.getTime() - (25200000) + 43200000)) {
+        if (date > (data.rows[i].lastUpdated.getTime() - (28800000) + 43200000)) {
           if (data.rows[i].isTwitch) {
             const lastItem = (i === (data.rows.length - 1));
             const twitchId = data.rows[i].twitchId;
@@ -255,6 +255,7 @@ app.put('/api/streamers/current', (req, res, next) => {
               .then(response => response.json())
               .then(data => {
                 const values = data.data[0];
+                downloadImage(values.profile_image_url, twitchId);
                 const sql = `
                 update "streamers"
                 set "channelId" = $1,
@@ -280,6 +281,7 @@ app.put('/api/streamers/current', (req, res, next) => {
               .then(response => response.json())
               .then(data => {
                 const values = data.items[0].snippet;
+                downloadImage(values.thumbnails.medium.url, data.items[0].id);
                 const sql = `
                 update "streamers"
                 set "displayName" = $1,
