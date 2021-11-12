@@ -13,7 +13,10 @@ function SmallProfile(props) {
           {props.name}
         </div>
         <div className="hover" onClick={props.modalProfileClick}>
-          <img className="border-radius-180 max-width-img" src={props.imgUrl} />
+          <img className="border-radius-180 max-width-img"
+            src={(props.twitch)
+              ? `./images/${props.twitchId}.png`
+              : `./images/${props.channel}.png`} />
         </div>
         <ul className="flex liststyle-none padding-halfrem margin-0
         flex-align-center">
@@ -47,7 +50,8 @@ function SmallProfile(props) {
         </ul>
       </div>
       {(props.modal)
-        ? <LargeProfilePopup name={props.name} imgUrl={props.imgUrl} twitch={props.twitch}
+        ? <LargeProfilePopup name={props.name} imgUrl={props.imgUrl}
+        twitch={props.twitch} twitchId={props.twitchId}
         recentVideo={props.recentVideo} starClick={props.starClick}
         modalCloser={props.modalCloser} isFav={props.isFav}
         description={props.description} channel={props.channel}

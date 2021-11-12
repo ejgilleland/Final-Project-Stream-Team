@@ -11,7 +11,7 @@ function Body(props) {
     modalProfileClick={props.modalProfileClick} modalCloser={props.modalCloser}
     modal={((props.modalData.streamerId === element.streamerId) && props.modalData.isOpen)}
     description={element.description} deleteModalClick={props.deleteModalClick}
-    channel={element.channelId}/>;
+    channel={element.channelId} twitchId={element.twitchId} />;
   });
   const searchedProfiles = profileElements.filter(element => element.props.name.toLowerCase().includes(props.searchData.value));
   return (

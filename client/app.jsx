@@ -52,6 +52,8 @@ export default class App extends React.Component {
     this.deleteProfileModalHandler = this.deleteProfileModalHandler.bind(this);
     this.deleteProfileModalCloser = this.deleteProfileModalCloser.bind(this);
     this.deleteProfile = this.deleteProfile.bind(this);
+    this.checkUpdatedProfile = this.checkUpdatedProfile.bind(this);
+    this.checkUpdatedVideo = this.checkUpdatedVideo.bind(this);
   }
 
   retrieveData() {
@@ -89,10 +91,35 @@ export default class App extends React.Component {
       .catch(err => console.error(err));
   }
 
+  checkUpdatedProfile() {
+    const init = {
+      method: 'PUT'
+    };
+    fetch('/api/streamers/current', init)
+      .then(response => {
+        if (response.ok) { this.retrieveData(); }
+      })
+      .catch(err => console.error(err));
+  }
+
+  checkUpdatedVideo() {
+    const init = {
+      method: 'PUT'
+    };
+    fetch('/api/streamers/videos/current', init)
+      .then(response => {
+        if (response.ok) { this.retrieveData(); }
+      })
+      .catch(err => console.error(err));
+  }
+
   componentDidMount() {
     this.setState({ userId: 1 });
     // userId temporarily hard coded to 1 until authorization is set up
-    this.retrieveData();
+    this.checkUpdatedProfile();
+    this.checkUpdatedVideo();
+    window.setInterval(this.checkUpdatedProfile, 600000);
+    window.setInterval(this.checkUpdatedVideo, 600000);
   }
 
   starClickHandler(event) {
