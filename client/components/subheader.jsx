@@ -20,10 +20,14 @@ function Subheader(props) {
           <label htmlFor="favorite">Prioritize Favorites? </label>
           <input type="checkbox" id="favorite" defaultChecked value="favorite"
             className="body-font font-size-inherit margin-bottom-halfrem"/>
-          <select className="width-100pct body-font font-size-inherit">
-            <option value="alpha-asc">Alphabetical (ascending)</option>
+          <select className="width-100pct body-font font-size-inherit"
+          onChange={props.sortChange}>
+            <option value="name-asc">Name (ascending)</option>
+            <option value="name-desc">Name (descending)</option>
+            <option value="recent-vid">Recent Video</option>
+            <option value="recent-add">Recently Added</option>
           </select>
-        </form>
+      </form>
       </div>
     </div>
   );

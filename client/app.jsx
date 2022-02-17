@@ -15,6 +15,8 @@ export default class App extends React.Component {
         isOpen: false,
         streamerId: 0
       },
+      sortType: 'name-asc',
+      sortFavs: true,
       search: {
         isSearching: false,
         value: ''
@@ -54,6 +56,8 @@ export default class App extends React.Component {
     this.deleteProfile = this.deleteProfile.bind(this);
     this.checkUpdatedProfile = this.checkUpdatedProfile.bind(this);
     this.checkUpdatedVideo = this.checkUpdatedVideo.bind(this);
+    this.sortData = this.sortData.bind(this);
+    this.sortChange = this.sortChange.bind(this);
   }
 
   retrieveData() {
@@ -76,19 +80,79 @@ export default class App extends React.Component {
         }
         const combination = [];
         combination.push(favorites, likes);
-        const streamers = combination.flat(2);
+        // const streamers = combination.flat(2);
         const favIds = favorites.map(element => {
           return element.streamerId;
         });
         this.setState({
           favorites,
           favIds,
-          likes,
+          likes
+          // ,
+          // streamers,
+          // loading: false
+        });
+        const streamers = this.sortData(this.state.sortType);
+        this.setState({
           streamers,
           loading: false
         });
       })
       .catch(err => console.error(err));
+  }
+
+  sortData(sortType) {
+    const unsortedLikes = this.state.likes;
+    const unsortedFavs = this.state.favorites;
+    const mappedLikesNames = unsortedLikes.map((element, index) => {
+      return { index, name: element.displayName.toLowerCase() };
+    });
+    const mappedFavsNames = unsortedFavs.map((element, index) => {
+      return { index, name: element.displayName.toLowerCase() };
+    });
+    function descNameSort(array) {
+      array.sort((a, b) => {
+        if (b.name > a.name) {
+          return 1;
+        }
+        if (b.name < a.name) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+    function ascNameSort(array) {
+      array.sort((a, b) => {
+        if (a.name > b.name) {
+          return 1;
+        }
+        if (a.name < b.name) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+    if (sortType === 'name-asc') {
+      ascNameSort(mappedLikesNames);
+      ascNameSort(mappedFavsNames);
+    }
+    if (sortType === 'name-desc') {
+      descNameSort(mappedLikesNames);
+      descNameSort(mappedFavsNames);
+    }
+    const fullLikes = mappedLikesNames.map(element => {
+      return this.state.likes[element.index];
+    });
+    const fullFavs = mappedFavsNames.map(element => {
+      return this.state.favorites[element.index];
+    });
+    const combinedStreamers = fullFavs.concat(fullLikes);
+    return combinedStreamers;
+  }
+
+  sortChange(event) {
+    const sortedStreamers = this.sortData(event.target.value);
+    this.setState({ sortType: event.target.value, streamers: sortedStreamers });
   }
 
   checkUpdatedProfile() {
@@ -416,7 +480,9 @@ export default class App extends React.Component {
         clickReset={this.clickReset} clickYes={this.clickYes} clickClose={this.clickClose}
         deleteModalClick={this.deleteProfileModalHandler}
         deleteModalClose={this.deleteProfileModalCloser}
-        deleteModal={this.state.profileDelete} deleteYes={this.deleteProfile}/>
+        deleteModal={this.state.profileDelete} deleteYes={this.deleteProfile}
+        sortChange={this.sortChange}
+        />
 
     );
   }
