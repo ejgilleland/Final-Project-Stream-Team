@@ -1,3 +1,5 @@
+// credit: https://dev.to/masbagal/saving-image-from-url-using-node-js-5an6
+
 const fs = require('fs');
 const fetch = require('node-fetch');
 

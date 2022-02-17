@@ -147,6 +147,10 @@ html {
   max-width: 120px;
 }
 
+.width-25pct {
+  width: 25%;
+}
+
 .width-50pct {
   width: 50%;
 }
