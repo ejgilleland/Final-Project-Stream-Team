@@ -78,8 +78,8 @@ export default class App extends React.Component {
         for (let i = 0; i < (resData.length); i++) {
           likes.push(resData[i]);
         }
-        const combination = [];
-        combination.push(favorites, likes);
+        // const combination = [];
+        // combination.push(favorites, likes);
         // const streamers = combination.flat(2);
         const favIds = favorites.map(element => {
           return element.streamerId;

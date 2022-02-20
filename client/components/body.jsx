@@ -20,7 +20,7 @@ function Body(props) {
     margin-bottom-1rem">
       {(props.searchData.isSearching)
         ? (searchedProfiles.length > 0) ? searchedProfiles : 'There\'s nothing here!'
-        : profileElements
+        : (profileElements.length > 0) ? profileElements : 'There\'s nothing here!'
       }
       {(props.deleteModal.isOpen)
         ? <DeleteProfileModal deleteModal={props.deleteModal} data={props.data}

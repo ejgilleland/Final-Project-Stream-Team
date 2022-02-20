@@ -26,7 +26,10 @@ function DeleteProfileModal(props) {
               {props.data[index].displayName}
             </div>
             <div className="margin-top-halfrem">
-              <img className="border-radius-180 max-width-img larger-image-breakpoint" src={props.data[index].profileImgUrl} />
+              <img className="border-radius-180 max-width-img larger-image-breakpoint"
+                src={(props.data[index].isTwitch)
+                  ? `./images/${props.data[index].twitchId}.png`
+                  : `./images/${props.data[index].channelId}.png`} />
             </div>
           </div>
           <ul className="flex liststyle-none flex flex-20 padding-0 margin-top-1rem
