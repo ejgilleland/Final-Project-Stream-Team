@@ -58,6 +58,7 @@ export default class App extends React.Component {
     this.checkUpdatedVideo = this.checkUpdatedVideo.bind(this);
     this.sortData = this.sortData.bind(this);
     this.sortChange = this.sortChange.bind(this);
+    this.favSortChange = this.favSortChange.bind(this);
   }
 
   retrieveData() {
@@ -92,7 +93,7 @@ export default class App extends React.Component {
           // streamers,
           // loading: false
         });
-        const streamers = this.sortData(this.state.sortType);
+        const streamers = this.sortData(this.state.sortType, this.state.sortFavs);
         this.setState({
           streamers,
           loading: false
@@ -101,15 +102,7 @@ export default class App extends React.Component {
       .catch(err => console.error(err));
   }
 
-  sortData(sortType) {
-    const unsortedLikes = this.state.likes;
-    const unsortedFavs = this.state.favorites;
-    const mappedLikesNames = unsortedLikes.map((element, index) => {
-      return { index, name: element.displayName.toLowerCase() };
-    });
-    const mappedFavsNames = unsortedFavs.map((element, index) => {
-      return { index, name: element.displayName.toLowerCase() };
-    });
+  sortData(sortType, sortFavs) {
     function descNameSort(array) {
       array.sort((a, b) => {
         if (b.name > a.name) {
@@ -132,27 +125,58 @@ export default class App extends React.Component {
         return 0;
       });
     }
-    if (sortType === 'name-asc') {
-      ascNameSort(mappedLikesNames);
-      ascNameSort(mappedFavsNames);
+    if (sortFavs) {
+      const unsortedLikes = this.state.likes;
+      const unsortedFavs = this.state.favorites;
+      const mappedLikesNames = unsortedLikes.map((element, index) => {
+        return { index, name: element.displayName.toLowerCase() };
+      });
+      const mappedFavsNames = unsortedFavs.map((element, index) => {
+        return { index, name: element.displayName.toLowerCase() };
+      });
+      if (sortType === 'name-asc') {
+        ascNameSort(mappedLikesNames);
+        ascNameSort(mappedFavsNames);
+      }
+      if (sortType === 'name-desc') {
+        descNameSort(mappedLikesNames);
+        descNameSort(mappedFavsNames);
+      }
+      const fullLikes = mappedLikesNames.map(element => {
+        return this.state.likes[element.index];
+      });
+      const fullFavs = mappedFavsNames.map(element => {
+        return this.state.favorites[element.index];
+      });
+      const combinedStreamers = fullFavs.concat(fullLikes);
+      return combinedStreamers;
+    } else {
+      const unsortedCombo = this.state.favorites.concat(this.state.likes);
+      const mappedCombo = unsortedCombo.map((element, index) => {
+        return { index, name: element.displayName.toLowerCase() };
+      });
+      if (sortType === 'name-asc') {
+        ascNameSort(mappedCombo);
+      }
+      if (sortType === 'name-desc') {
+        descNameSort(mappedCombo);
+      }
+      const sortedCombo = mappedCombo.map(element => {
+        return unsortedCombo[element.index];
+      });
+      return sortedCombo;
     }
-    if (sortType === 'name-desc') {
-      descNameSort(mappedLikesNames);
-      descNameSort(mappedFavsNames);
-    }
-    const fullLikes = mappedLikesNames.map(element => {
-      return this.state.likes[element.index];
-    });
-    const fullFavs = mappedFavsNames.map(element => {
-      return this.state.favorites[element.index];
-    });
-    const combinedStreamers = fullFavs.concat(fullLikes);
-    return combinedStreamers;
   }
 
   sortChange(event) {
-    const sortedStreamers = this.sortData(event.target.value);
+    const sortedStreamers = this.sortData(event.target.value, this.state.sortFavs);
     this.setState({ sortType: event.target.value, streamers: sortedStreamers });
+  }
+
+  favSortChange(event) {
+    const sortFavsToggle = !this.state.sortFavs;
+    const sortedStreamers = this.sortData(this.state.sortType, sortFavsToggle);
+    this.setState({ sortFavs: sortFavsToggle, streamers: sortedStreamers });
   }
 
   checkUpdatedProfile() {
@@ -481,7 +505,7 @@ export default class App extends React.Component {
         deleteModalClick={this.deleteProfileModalHandler}
         deleteModalClose={this.deleteProfileModalCloser}
         deleteModal={this.state.profileDelete} deleteYes={this.deleteProfile}
-        sortChange={this.sortChange}
+        sortChange={this.sortChange} favSortChange={this.favSortChange}
         />
 
     );

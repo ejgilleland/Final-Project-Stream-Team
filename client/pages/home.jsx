@@ -25,7 +25,8 @@ export default function Home(props) {
           </AddProfileModal>
         : null
       }
-      <Subheader handleSearchbarChange={props.handleSearchbarChange} sortChange={props.sortChange} />
+      <Subheader handleSearchbarChange={props.handleSearchbarChange}
+      sortChange={props.sortChange} favSortChange={props.favSortChange} />
       <Body data={props.profileInfo} favIds={props.favIds}
       starClick={props.starClick} modalProfileClick={props.modalProfileClick}
       modalCloser={props.modalCloser} modalData={props.modalData}

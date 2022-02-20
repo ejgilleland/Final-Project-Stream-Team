@@ -19,7 +19,8 @@ function Subheader(props) {
         <form className="flex-30" name='sort' action="">
           <label htmlFor="favorite">Prioritize Favorites? </label>
           <input type="checkbox" id="favorite" defaultChecked value="favorite"
-            className="body-font font-size-inherit margin-bottom-halfrem"/>
+            className="body-font font-size-inherit margin-bottom-halfrem"
+            onChange={props.favSortChange} />
           <select className="width-100pct body-font font-size-inherit"
           onChange={props.sortChange}>
             <option value="name-asc">Name (ascending)</option>
